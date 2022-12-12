@@ -15,3 +15,8 @@ We are using a neural network (CNN) to listen to you jam. After working some mag
 Here is how it actually works:
 
 ...
+
+# Data used
+The data was created and publisehd by [Q. Xi, R. Bittner, J. Pauwels, X. Ye, and J. P. Bello, "​Guitarset: A Dataset for Guitar Transcription", in 19th International Society for Music Information Retrieval Conference, Paris, France, Sept. 2018.](https://guitarset.weebly.com/uploads/1/2/1/6/121620128/xi_ismir_2018.pdf) and can be downloaded [here](https://guitarset.weebly.com).
+
+This project was lead by Qingyang Xi at NYU's Music and Audio Research Lab, along with Rachel Bittner, Xuzhou Ye and Juan Pablo Bello from the same lab, as well as Johan Pauwels at the Center for Digital Music at Queen Mary University of London.
