@@ -1,4 +1,6 @@
 .PHONY: setup
+.PHONY: activate
+
 setup:
 		pyenv local 3.9.8
 		python -m venv .venv
