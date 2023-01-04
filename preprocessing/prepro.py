@@ -16,7 +16,6 @@ import librosa.display
 import jams
 import os
 import logging
-import sys
 
 
 #############################################
