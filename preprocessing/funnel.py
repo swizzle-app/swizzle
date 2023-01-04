@@ -16,7 +16,12 @@ from prepro import PreProcessor
 import logging
 import os
 
+
+#############################################
+#                   CONSTANTS               #
+#############################################
 OUTPUTPATH = '../data/output/'
+
 
 class Funnel():
 
