@@ -101,7 +101,13 @@ class PreProcessor():
             path = self.labelpath
 
         self.logger.info(f'Getting filenames from path {path}.')
-        return np.sort(os.listdir(path))
+
+        files = np.sort(os.listdir(path))
+
+        # only use .jams or .wav files
+        files = [f for f in files if f.endswith(".jams")]
+
+        return files
 
 
     def load_files(self, filename: str, rec_mode: str = 'mm'):

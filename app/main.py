@@ -36,7 +36,14 @@ def generate_training_data(verbose: int = 0):
         p = PreProcessor(verbose=4)
         f = Funnel(p, verbose=4)
 
-        f.get_training_data(r=False, save=True, subset=1)
+        # PRODUCTION
+        # f.get_training_data(r=False, save=True, subset=1)
+        
+        # TESTING
+        logger.info("-"*50)
+        logger.info("TEST FUNCTION")
+        logger.info("-"*50)
+        f.get_training_data(r=False, save=False, subset=0.01)
 
         logger.info("-"*50)
         logger.info("Finished training data generation.")
