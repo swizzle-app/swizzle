@@ -104,7 +104,7 @@ class PreProcessor():
 
         files = np.sort(os.listdir(path))
 
-        # only use .jams or .wav files
+        # only use .jams files
         files = [f for f in files if f.endswith(".jams")]
 
         return files
