@@ -95,7 +95,7 @@ class Funnel():
         self.logger.info(f"Processing data.")
 
         # load data into librosa object
-        data = librosa.load(data, sr=None)
+        data, _ = librosa.load(data, sr=None)
 
         # preprocess data
         self.p.preprocess_audio(data)
