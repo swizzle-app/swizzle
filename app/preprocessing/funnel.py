@@ -12,7 +12,6 @@
 #############################################
 import numpy as np
 import librosa
-from prepro import PreProcessor
 import logging
 import os
 
@@ -25,13 +24,13 @@ OUTPUTPATH = '../data/output/'
 
 class Funnel():
 
-    def __init__(self, verbose: int = 0, outputpath: str = OUTPUTPATH):
-        
-        self.alive = True
+    def __init__(self, preprocessor, verbose: int = 0, outputpath: str = OUTPUTPATH):
 
          # fix outputpath string
         if not outputpath.endswith('/'): 
             outputpath += '/'
+
+        self.p = preprocessor
 
         # save outputpath
         self.outputpath = outputpath
@@ -42,7 +41,6 @@ class Funnel():
         verbosity = {0: logging.CRITICAL, 1: logging.ERROR, 2: logging.WARNING, 3: logging.INFO, 4: logging.DEBUG}
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(verbosity[verbose])
-
         self.logger.info('Funnel created.')
 
     
@@ -52,21 +50,33 @@ class Funnel():
         Returns:
             bool: True if initialized correctly.
         """
-        return self.alive
+        return print(f"I'm alive!")
 
 
-    def training(self, save: bool = False, subset: float = 1):
+    def get_training_data(self, r: bool = True, save: bool = False, subset: float = 1, filter: str = None):
+        """Generates training data (X and y) from the GuitarSet dataset. Input can be filtered by filenames (e.g. "solo" or "comp").
 
-        # create PreProcessor object
-        p = PreProcessor()
+        Args:
+            r (bool, optional): Whether the data should be returned. Defaults to True.
+            save (bool, optional): Whether to save output as npz files. Defaults to False.
+            subset (float, optional): Fraction of input to process. Defaults to 1.
+            filter (str, optional): Filter for input filenames. Defaults to None.
+
+        Returns:
+            list: X (data)
+            list: y (labels)
+        """
 
         # get filenames in folder
-        filenames = p.get_filenames()
+        filenames = self.p.get_filenames()
 
         # only take subset of data
         if subset < 1:
             ubound = np.round(len(filenames) * subset, 0).astype(int)
             filenames = filenames[:ubound]
+        
+        if filter:
+            filenames = [f for f in filenames if filter in f]
 
         X = []
         y = []
@@ -77,28 +87,35 @@ class Funnel():
             self.logger.info(f"Processing file: {f} ({idx+1}/{len(filenames)})")
 
             # get audio and label file for first filename
-            audio, labels = p.load_files(f)
+            audio, labels = self.p.load_files(f)
 
             # Preprocess audio and labels
-            p.preprocess_audio(audio)
-            p.preprocess_labels(labels)
+            self.p.preprocess_audio(audio)
+            self.p.preprocess_labels(labels)
 
             # store each point in X and y
-            for datapoint in p.output.get('windows'):
+            for datapoint in self.p.output.get('windows'):
                 X.append(datapoint)
 
-            for labelpoint in p.output.get('windowlabels'):
+            for labelpoint in self.p.output.get('windowlabels'):
                 y.append(labelpoint)
 
-        if save: self._save_output(X, y)
+        # save output into npz files if needed
+        if save: self._save_output(data=X, labels=y)
         
-        return X, y
+        if r: return X, y
 
 
     def process_data(self, data, save: bool = False):
-        
-        # create preprocessor object
-        p = PreProcessor()
+        """Process user audio data provided from the frontend
+
+        Args:
+            data (file-like): 
+            save (bool, optional): Whether to save the output to a .npz file. Defaults to False.
+
+        Returns:
+            list: X (data)
+        """
 
         self.logger.info(f"Processing data.")
 
@@ -106,13 +123,13 @@ class Funnel():
         data = librosa.load(data, sr=None)
 
         # preprocess data
-        p.preprocess_audio(data)
+        self.p.preprocess_audio(data)
 
         self.logger.info(f"Success!")
 
         # save
         if save: 
-            self._save_outputself.p.output.get('windows')
+            self._save_output(data=self.p.output.get('windows'))
 
         # return X
         return self.p.output.get('windows')
@@ -146,6 +163,4 @@ class Funnel():
 
 if __name__ == "__main__":
     f = Funnel(verbose=4)
-
-    # create training data
-    X, y = f.training(save=True, subset=0.05)
+    print(f"Alive: {'Yes!' if f.hello_world() else 'No :('}")
