@@ -19,20 +19,6 @@ import logging
 
 
 #############################################
-#                   TO DO                   #
-#############################################
-#                                           #
-# 1. Collect filenames in JAMS folder   ✓   #
-# 2. Load wave and jams files           ✓   #
-# 3. Create spectrogram                 ✓   #
-# 4. Extract windows                    ✓   #
-# 5. Extract window labels              ✓   #
-# 6. Store data in object               ✓   #
-#                                           #
-#############################################
-
-
-#############################################
 #                   CONSTANTS               #
 #############################################
 AUDIOPATH = '../data/raw/'
@@ -48,7 +34,7 @@ class PreProcessor():
     def __init__(self, audiopath: str = AUDIOPATH, labelpath: str = LABELPATH, outputpath: str = OUTPUTPATH,
                  tuning: list = STANDARDE, frets: int = 19,
                  hop_length: int = 512, bins: int = 192, bins_per_octave: int = 24, sr: int = 22050, normalize: bool = True, 
-                 window_width: int = 9, verbose: int = 3) -> None:
+                 window_width: int = 9, verbose: int = 0) -> None:
         """Generates a preprocessing object
 
         Args:

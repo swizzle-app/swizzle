@@ -53,7 +53,19 @@ class Funnel():
         return print(f"I'm alive!")
 
 
-    def training(self, save: bool = False, subset: float = 1):
+    def get_training_data(self, r: bool = True, save: bool = False, subset: float = 1, filter: str = None):
+        """Generates training data (X and y) from the GuitarSet dataset. Input can be filtered by filenames (e.g. "solo" or "comp").
+
+        Args:
+            r (bool, optional): Whether the data should be returned. Defaults to True.
+            save (bool, optional): Whether to save output as npz files. Defaults to False.
+            subset (float, optional): Fraction of input to process. Defaults to 1.
+            filter (str, optional): Filter for input filenames. Defaults to None.
+
+        Returns:
+            list: X (data)
+            list: y (labels)
+        """
 
         # get filenames in folder
         filenames = self.p.get_filenames()
@@ -62,6 +74,9 @@ class Funnel():
         if subset < 1:
             ubound = np.round(len(filenames) * subset, 0).astype(int)
             filenames = filenames[:ubound]
+        
+        if filter:
+            filenames = [f for f in filenames if filter in f]
 
         X = []
         y = []
@@ -85,12 +100,22 @@ class Funnel():
             for labelpoint in self.p.output.get('windowlabels'):
                 y.append(labelpoint)
 
+        # save output into npz files if needed
         if save: self._save_output(data=X, labels=y)
         
-        return X, y
+        if r: return X, y
 
 
     def process_data(self, data, save: bool = False):
+        """Process user audio data provided from the frontend
+
+        Args:
+            data (file-like): 
+            save (bool, optional): Whether to save the output to a .npz file. Defaults to False.
+
+        Returns:
+            list: X (data)
+        """
 
         self.logger.info(f"Processing data.")
 
@@ -139,5 +164,3 @@ class Funnel():
 if __name__ == "__main__":
     f = Funnel(verbose=4)
     print(f"Alive: {'Yes!' if f.hello_world() else 'No :('}")
-    # create training data
-    # X, y = f.training(save=True, subset=0.05)
