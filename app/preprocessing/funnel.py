@@ -83,6 +83,9 @@ class Funnel():
 
         # got through all files
         for idx, f in enumerate(filenames):
+            
+            # skip .DS_Store (macOS shenanigans)
+            if ".DS_Store" in f: continue
 
             self.logger.info(f"Processing file: {f} ({idx+1}/{len(filenames)})")
 
