@@ -29,7 +29,7 @@ OUTPUTPATH = '../data/output/'
 STANDARDE = [40, 45, 50, 55, 59, 64]
 
 
-class PostProcessor():
+class PostProcessor:
 
     def __init__(self, verbose: int = 3):
 

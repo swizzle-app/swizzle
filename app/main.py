@@ -15,7 +15,7 @@ from preprocessing.prepro import PreProcessor
 import os
 import logging
 
-def generate_training_data(verbose: int = 0, r: bool = False, save: bool = True, subset: float = 1):
+def generate_training_data(verbose: int = 0, r: bool = False, save: bool = True, subset: float = 1, filter: str = None):
     """Generates Preprocessor and Funnel objects to process the dataset. Returns training data.
 
     Args:
@@ -23,6 +23,7 @@ def generate_training_data(verbose: int = 0, r: bool = False, save: bool = True,
         r (bool, optional): Whether to return the data generated. Defaults to False.
         save (bool, optional): Wheter to save the data generated (*.npz). Defaults to True.
         subset (float, optional): What fraction of the data to use (0-1). Defaults to 1 (all data).
+        filter (str, optional): Filter the data (e.g. "solo" or "comp"). Defaults to None
     """
 
     # setup logger
@@ -40,23 +41,22 @@ def generate_training_data(verbose: int = 0, r: bool = False, save: bool = True,
         logger.info("Starting training data generation.")
         logger.info("-"*50)
 
-        p = PreProcessor(verbose=4)
-        f = Funnel(p, verbose=4)
+        p = PreProcessor(verbose=verbose)
+        f = Funnel(p, verbose=verbose, f=filter)
 
-        # save and return set to true?
-        if r or save:
-            # if data should be returned, store in variables
-            if r:
-                X, y = f.get_training_data(r=r, save=save, subset=subset)
-                return X, y
-            else:
-                f.get_training_data(r=r, save=save, subset=subset)
-
-            logger.info("-"*50)
-            logger.info("Finished training data generation.")
-            logger.info("-"*50)
-
+        # if data should be returned, return function's return
+        if r:
+            return f.get_training_data(r=r, save=save, subset=subset, filter=filter)
+        
+        # else just save the files
         else:
+            f.get_training_data(r=r, save=save, subset=subset, filter=filter)
+
+        logger.info("-"*50)
+        logger.info("Finished training data generation.")
+        logger.info("-"*50)
+
+        if r == False and save == False:
             logger.info("Data will neither be returned nor saved. Maybe your forgot to set your output (parameters r and/or save)?")
     
     else:
@@ -66,11 +66,17 @@ def generate_training_data(verbose: int = 0, r: bool = False, save: bool = True,
         if "app" in os.listdir(cwd):
             os.chdir("app")
             logger.warning(f"Done.")
-            generate_training_data(verbose=4)
+            print(r, save, subset, filter)
+            generate_training_data(verbose=verbose, r=r, save=save, subset=subset, filter=filter)
 
         else:
             logger.warning("Couldn't find \"app\" directory. Please change to it manually")
 
 
 if __name__ == "__main__":
-    generate_training_data(verbose=4)
+
+    r = False
+    save = True
+    filter = 'solo'
+    
+    generate_training_data(verbose=4, r=r, save=save, subset=1, filter=filter)
