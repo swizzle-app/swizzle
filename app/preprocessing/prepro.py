@@ -29,7 +29,7 @@ OUTPUTPATH = '../data/output/'
 STANDARDE = [40, 45, 50, 55, 59, 64]
 
 
-class PreProcessor():
+class PreProcessor:
 
     def __init__(self, audiopath: str = AUDIOPATH, labelpath: str = LABELPATH, outputpath: str = OUTPUTPATH,
                  tuning: list = STANDARDE, frets: int = 19,
