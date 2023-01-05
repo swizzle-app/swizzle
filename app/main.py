@@ -15,9 +15,16 @@ from preprocessing.prepro import PreProcessor
 import os
 import logging
 
-def generate_training_data(verbose: int = 0):
+def generate_training_data(verbose: int = 0, r: bool = False, save: bool = True, subset: float = 1):
     """Generates Preprocessor and Funnel objects to process the dataset. Returns training data.
+
+    Args:
+        verbose (int, optional): Verbosity of function (0-4). Defaults to 0.
+        r (bool, optional): Whether to return the data generated. Defaults to False.
+        save (bool, optional): Wheter to save the data generated (*.npz). Defaults to True.
+        subset (float, optional): What fraction of the data to use (0-1). Defaults to 1 (all data).
     """
+
     # setup logger
     FORMAT = "[%(levelname)8s][%(filename)s:%(lineno)4s - %(funcName)20s() ] %(message)s"
     logging.basicConfig(format=FORMAT)
@@ -36,18 +43,21 @@ def generate_training_data(verbose: int = 0):
         p = PreProcessor(verbose=4)
         f = Funnel(p, verbose=4)
 
-        # PRODUCTION
-        # f.get_training_data(r=False, save=True, subset=1)
-        
-        # TESTING
-        logger.info("-"*50)
-        logger.info("TEST FUNCTION")
-        logger.info("-"*50)
-        f.get_training_data(r=False, save=False, subset=0.01)
+        # save and return set to true?
+        if r or save:
+            # if data should be returned, store in variables
+            if r:
+                X, y = f.get_training_data(r=r, save=save, subset=subset)
+                return X, y
+            else:
+                f.get_training_data(r=r, save=save, subset=subset)
 
-        logger.info("-"*50)
-        logger.info("Finished training data generation.")
-        logger.info("-"*50)
+            logger.info("-"*50)
+            logger.info("Finished training data generation.")
+            logger.info("-"*50)
+
+        else:
+            logger.info("Data will neither be returned nor saved. Maybe your forgot to set your output (parameters r and/or save)?")
     
     else:
         logger.warning(f"Wrong working directory (currently in : {os.getcwd().split('/')[-1]})")
