@@ -133,7 +133,7 @@ class Funnel:
         data, _ = librosa.load(data, sr=None)
 
         # preprocess data
-        self.p.preprocess_audio(data)
+        self.p.preprocess_audio(data, training=False)
 
         self.logger.info(f"Success!")
 

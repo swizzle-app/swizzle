@@ -145,7 +145,7 @@ class PreProcessor:
         return audio, jams.load(labelfile)
 
 
-    def preprocess_audio(self, data: np.ndarray):
+    def preprocess_audio(self, data: np.ndarray, training: bool = False):
         """Normalizes audio, calculates CQT and hands data over to _get_windows() for sliding window generation. Data is stored in self.output['data'].
 
         Args:
@@ -166,7 +166,7 @@ class PreProcessor:
         self.output['data'] = np.swapaxes(data, 0, 1)
 
         # get data windows
-        self._get_windows(self.output['data'])
+        self._get_windows(self.output['data'], training)
         
 
     def preprocess_labels(self, labels: jams.JAMS):
@@ -218,53 +218,66 @@ class PreProcessor:
         return data
 
 
-    def _get_windows(self, data):
+    def _get_windows(self, data, training: bool = False):
         """Sliding window function to extract windows with set width from an input array. Windows are stored in self.output['windows'].
 
         Args:
             data (np.ndarray): preprocessed audio data
+            training (bool): indicate whether training data is generated or user data is processed. Defaults to False.
 
         """
-        
+
         # initialize windows array
         windows = np.zeros(shape=(len(data), self.bins, self.winwidth))
 
-        # calculate half-width of window
-        half_width = self.winwidth//2
+        if training:
+
+            self.logger.info(f"Training data: {training}")
+            # calculate half-width of window
+            half_width = self.winwidth//2
 
 
-        # Data is in format: TIME x FREQUENCY
-        # Loop over the different timepoints and save windows that are 9 timepoints wide,
-        # centered around the current timepoint. If no 9 timepoints are available
-        # (left and right edge), pad the windows accordingly.
-        #
-        # Pseudocode:
-        # 
-        # 1. get current timepoint
-        # 2. calculate left and right timepoints (-+ half_width)
-        # 3. if either is < 0 or > len(data) --> padding
-        # 4. Padding means adding winwidth - lbound zero-arrays
+            # Data is in format: TIME x FREQUENCY
+            # Loop over the different timepoints and save windows that are 9 timepoints wide,
+            # centered around the current timepoint. If no 9 timepoints are available
+            # (left and right edge), pad the windows accordingly.
+            #
+            # Pseudocode:
+            # 
+            # 1. get current timepoint
+            # 2. calculate left and right timepoints (-+ half_width)
+            # 3. if either is < 0 or > len(data) --> padding
+            # 4. Padding means adding winwidth - lbound zero-arrays
 
-        # f_idx/fbin: different frequency bins
-        # t_idx/tpoint: different timepoints
-        for t_idx in range(len(data)):
-            # set left and right bounds, so that item at t_idx is centered
-            lbound = t_idx - half_width
-            rbound = t_idx + half_width + 1
+            # f_idx/fbin: different frequency bins
+            # t_idx/tpoint: different timepoints
+            for t_idx in range(len(data)):
+                # set left and right bounds, so that item at t_idx is centered
+                lbound = t_idx - half_width
+                rbound = t_idx + half_width + 1
 
-            self.logger.info(f"Extracting window {t_idx}/{len(data)-1}. Frames: {lbound, rbound}", )
+                self.logger.info(f"Extracting window {t_idx}/{len(data)-1}. Frames: {lbound, rbound}", )
 
-            # if bounds > 0 and < len(data), simply extract window
-            if lbound >= 0 and rbound < len(data):
-                windows[t_idx] = data[lbound:rbound].T
-            
-            # if left bound below zero, pad left
-            elif lbound < 0:
-                windows[t_idx] = self._pad_frame(data[0:rbound], True).T
+                # if bounds > 0 and < len(data), simply extract window
+                if lbound >= 0 and rbound < len(data):
+                    windows[t_idx] = data[lbound:rbound].T
+                
+                # if left bound below zero, pad left
+                elif lbound < 0:
+                    windows[t_idx] = self._pad_frame(data[0:rbound], True).T
 
-            # if right bound greater than input length, pad right
-            elif rbound >= len(data):
-                windows[t_idx] = self._pad_frame(data[lbound:], False).T
+                # if right bound greater than input length, pad right
+                elif rbound >= len(data):
+                    windows[t_idx] = self._pad_frame(data[lbound:], False).T
+
+        else:
+
+            self.logger.info(f"Training data: {training}")
+            # construct arrays for each frame over all frequency bins
+            for idx, frame in enumerate(self.output['data']):
+                self.logger.info(f"Processing user audio data frame {idx}/{len(data)-1}.")
+                windows[idx] = np.swapaxes([frame] * 9, 0, 1)
+
 
         self.output['windows'] = windows
 
@@ -371,13 +384,13 @@ class PreProcessor:
         # save files if data is present
         if 'windows' in self.output:
             np.savez(path + self.curr_file + self.curr_rm + "_" + suffix[0] + ".npz", self.output.get('windows'))
-            self.logger.info(f'Data was saved under {path}')
+            self.logger.info(f'Data was saved under {path + self.curr_file + self.curr_rm + "_" + suffix[0] + ".npz"}')
         else:
             self.logger.warning('No data to save!')
 
         if 'windowlabels' in self.output:
             np.savez(path + self.curr_file + self.curr_rm + "_" + suffix[1] + ".npz", self.output.get('windowlabels'))
-            self.logger.info(f'Labels were saved under {path}')
+            self.logger.info(f'Labels were saved under {path + self.curr_file + self.curr_rm + "_" + suffix[1] + ".npz"}')
         else:
             self.logger.warning('No labels to save!')
         
@@ -410,14 +423,16 @@ def main(verbose: int = 3):
     audio, labels = p.load_files(files[0])
 
     # Preprocess audio and labels
-    p.preprocess_audio(audio)
-    p.preprocess_labels(labels)
+    p.preprocess_audio(data=audio, training=False)
+    # p.preprocess_labels(labels)
 
     # save output
-    p.save_output()
+    # p.save_output()
 
     # check whether output is correct
-    p._test()
+    # p._test()
+
+    print(p.output['windows'])
 
 if __name__ == '__main__':
     main()
