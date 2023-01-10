@@ -23,14 +23,12 @@ import logging
 
 #sklearn
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import multilabel_confusion_matrix
-from sklearn.metrics import confusion_matrix
 
 #tensorflow
 import tensorflow as tf
 import tensorflow_hub as hub
 from tensorflow import keras
-from tensorflow.keras import layers
+#from tensorflow.keras import layers
 
 #keras
 import keras
@@ -47,27 +45,49 @@ from keras import backend as K
 
 RSEED = 42
 
-FRAME_HEIGHT = 192
-FRAME_WIDTH = 9
-N_CLASSES = 21
-N_STRINGS = 6
-BATCH_SIZE = 128
-EPOCHS = 8
-
-OUTPUTPATH = '../data/output/'
-
 class swizzle_model:
+
+    def __init__(self, 
+                 BATCH_SIZE=128, 
+                 FRAME_HEIGHT=192,
+                 EPOCHS=8,
+                 FRAME_WIDTH = 9,
+                 INPUTPATH="../data/output/",
+                 save_path="../data/model/"):   
+        
+        self.BATCH_SIZE = BATCH_SIZE
+        self.EPOCHS = EPOCHS
+        self.FRAME_HEIGHT = FRAME_HEIGHT
+        self.FRAME_WIDTH = FRAME_WIDTH
+        self.INPUTPATH = INPUTPATH
+        self.save_path = save_path
+        self.N_CLASSES = 21
+        self.N_STRINGS = 6
+
+        self.load_files()
+        
+        self.save_folder = self.save_path + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "/"
+        if not os.path.exists(self.save_folder):
+            os.makedirs(self.save_folder)
+        
+        # Check for Tensorflow version
+        print(tf.__version__)
+        tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.INFO)
+
 
     def load_files(self, file_name = str):
 
-        IMAGES = np.load(OUTPUTPATH + 'training_data.npz')
-        annots = np.load(OUTPUTPATH + 'training_labels.npz')
+        IMAGES = np.load(self.INPUTPATH + 'training_data.npz')
+        annots = np.load(self.INPUTPATH + 'training_labels.npz')
 
         self.logger.info(f"Loading output images and annotations.")
         return IMAGES, annots
 
 
-    def data_split(self, file_name = str):
+    def data_split(self, IMAGES, annots, file_name = str):
+
+        self.IMAGES = IMAGES
+        self.annots = annots
 
         """
         First we have to split our dataset into train and test set. 
@@ -77,13 +97,13 @@ class swizzle_model:
         the validation set and take the rest for training.
 
         '"""
-        train_images, test_images, train_annots, test_annots = train_test_split(
+        self.train_images, self.test_images, self.train_annots, self.test_annots = train_test_split(
             IMAGES['arr_0'], annots['arr_0'], test_size= 0.3, random_state= RSEED )
-        train_images, validate_images,train_annots,validate_annots = train_test_split(
-            train_images,train_annots, test_size = 0.1,random_state = RSEED)
+        self.train_images, self.validate_images,self.train_annots,self.validate_annots = train_test_split(
+            self.train_images,self.train_annots, test_size = 0.1,random_state = RSEED)
 
         self.logger.info(f"Split the data into train, validation and test sets.")
-        return train_images,test_images,validate_images,train_annots,test_annots, validate_annots
+
 
     def catcross_by_string(self,target, output):
         '''The normal categorical_crossentropy was not working with our model, so we had to use a 
@@ -91,14 +111,15 @@ class swizzle_model:
         It takes:
         It returns: Our loss function'''
         loss = 0
-        for i in range(N_STRINGS):
+        for i in range(self.N_STRINGS):
             loss += K.categorical_crossentropy(target[:,i,:], output[:,i,:])
         return loss
+
     
     def softmax_by_string(self,t):
         sh = K.shape(t)
         string_sm = []
-        for i in range(N_STRINGS):
+        for i in range(self.N_STRINGS):
             string_sm.append(K.expand_dims(K.softmax(t[:,i,:]), axis=1))
         return K.concatenate(string_sm, axis=1)
 
@@ -117,7 +138,7 @@ class swizzle_model:
         The different layers we used you can easily extract from below.
         '''      
         swizzle_model = tf.keras.Sequential()
-        swizzle_model.add(tf.keras.layers.InputLayer(input_shape=[FRAME_HEIGHT, FRAME_WIDTH, 1]))
+        swizzle_model.add(tf.keras.layers.InputLayer(input_shape=[self.FRAME_HEIGHT, self.FRAME_WIDTH, 1]))
         swizzle_model.add(tf.keras.layers.Conv2D(filters=32, kernel_size=(3, 3),activation='relu'))
         swizzle_model.add(tf.keras.layers.Conv2D(filters=64, kernel_size=(3, 3), activation='relu'))
         swizzle_model.add(tf.keras.layers.Conv2D(filters=64, kernel_size=(3, 3), activation='relu'))
@@ -127,12 +148,13 @@ class swizzle_model:
         swizzle_model.add(tf.keras.layers.Dense(128, activation='relu'))
         swizzle_model.add(tf.keras.layers.Dropout(0.5))
         swizzle_model.add(tf.keras.layers.Dense(126, activation='relu'))
-        swizzle_model.add(tf.keras.layers.Dense(N_CLASSES * N_STRINGS)) # no activation
-        swizzle_model.add(tf.keras.layers.Reshape((N_STRINGS, N_CLASSES)))
-        swizzle_model.add(tf.keras.layers.Activation(softmax_by_string))
+        swizzle_model.add(tf.keras.layers.Dense(self.N_CLASSES * self.N_STRINGS)) # no activation
+        swizzle_model.add(tf.keras.layers.Reshape((self.N_STRINGS, self.N_CLASSES)))
+        swizzle_model.add(tf.keras.layers.Activation(self.softmax_by_string))
 
         self.swizzle_model = swizzle_model
         return swizzle_model
+
 
     def compile_model(self):
 
@@ -152,12 +174,6 @@ class swizzle_model:
         loss='categorical_crossentropy'
         swizzle_model.compile(loss=loss, optimizer=optimizer, metrics=['accuracy'])
    
-    def my_makedirs(self,path):
-         #Create folder for model 
-        '''This function takes the path of a new folder and create a new one. 
-        If the folder already exists, it will pass.'''
-        if not os.path.isdir(path):
-            os.makedirs(path)
     
     def train_model(self):
 
@@ -169,25 +185,57 @@ class swizzle_model:
         learning_rate_reduction = ReduceLROnPlateau(monitor='val_accuracy', patience=3, verbose=1, factor=0.5, min_lr=0.0001)
 
         #for the training we fit our model and use the batch size and epochs from our constants
-        history = swizzle_model.fit( train_images,
-                                    train_annots,
-                                    batch_size=BATCH_SIZE,
-                                    epochs=EPOCHS,
+        history = self.swizzle_model.fit(self.train_images,
+                                    self.train_annots,
+                                    batch_size=self.BATCH_SIZE,
+                                    epochs=self.EPOCHS,
                                     verbose=1,
                                     use_multiprocessing=True,
-                                    validation_data=(validate_images,validate_annots),
+                                    validation_data=(self.validate_images,self.validate_annots),
                                     callbacks=[learning_rate_reduction],
         )
 
-        score = swizzle_model.evaluate(test_images,test_annots,verbose=0)
+        score = swizzle_model.evaluate(self.test_images,self.test_annots,verbose=0)
         print('Test Loss : {:.4f}'.format(score[0]))
         print('Test Accuracy : {:.4f}'.format(score[1]))
 
+
     def predict_model(self):
-        output = swizzle_model.predict(test_images)
+        self.model_output = self.swizzle_model.predict(self.test_images)
+        self.logger.info(f"swizzle is doing the magic :)")
+
 
     def save_model(self):
-        # Save the entire model as a SavedModel.
-        swizzle_model.save('../data/model/swizzle_model')
-        # Save and load the model output
-        np.save("../data/model/model_output.npy", output, allow_pickle=True, fix_imports=True)
+        # create directory
+        if not os.path.exists(self.save_path):
+            os.makedirs(self.save_path)
+
+        # get path
+        if not path:
+            path = self.save_path
+
+        # fix path string
+        if not path.endswith('/'): 
+            path += '/'
+
+        # save files if data is present
+            swizzle_model.save(self.save_path + 'swizzle_model')
+        self.logger.info(f"swizzle model is being saved :)")
+
+
+    def save_output(self):     
+        # create directory
+        if not os.path.exists(self.save_path):
+            os.makedirs(self.save_path)
+
+        # get path
+        if not path:
+            path = self.save_path
+
+        # fix path string
+        if not path.endswith('/'): 
+            path += '/'
+
+        # save files if data is present
+        np.save(self.save_path + "model_output.npy", self.model_output, allow_pickle=True, fix_imports=True)
+        self.logger.info(f"swizzle model output is being saved :)")
