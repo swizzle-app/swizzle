@@ -14,10 +14,10 @@
 </p>
 
 <p align=center>
-    <a href="#intro">Intro</a>
-    &nbsp;&bullet;&nbsp;<a href="#bts">Behind the scenes</a>
-    &nbsp;&bullet;&nbsp;<a href="#use">How To Use</a>
-    &nbsp;&bullet;&nbsp;<a href="#ref">Credits</a>
+    <a href="#intro">Intro</a>&nbsp;&bullet;&nbsp;
+    <a href="#bts">Behind the scenes</a>&nbsp;&bullet;&nbsp;
+    <a href="#use">How To Use</a>&nbsp;&bullet;&nbsp;
+    <a href="#ref">Credits</a>
 </p>
 
 <a id="intro"></a>
