@@ -67,7 +67,9 @@ There are two ways to use our app.
 
         # install dependencies
         $ make setup
+    Finally, you will need to download the dataset (if you want to use it) and extract it in the repository under "data/raw/". The dataset can be downloaded [here](https://guitarset.weebly.com).
 
+    
 <a id="ref"></a>
 
 # Credits
