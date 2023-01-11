@@ -1,24 +1,24 @@
-<p style="text-align:center">
+<center>
     <a href="www.google.com" target="_blank"><img src="media/logo.png" alt="swizzle-logo"></a>
-</p>
+</center>
 
 ---
 
-<p style="text-align:center">
+<center>
 <b>AI generated music notation from guitar recordings</b>
 </p>
 <p style="text-align:center">
 <img src="https://img.shields.io/static/v1?label=version&message=1.0&color=blueviolet" alt="version=1.0">
     <img src="https://img.shields.io/static/v1?label=python&message=v3.9.8&color=g" alt="python=3.9.8+">
     <img src="https://img.shields.io/static/v1?label=license&message=MIT&color=blue" alt="license=MIT">
-</p>
+</center>
 
-<p style="text-align:center">
+<center>
     <a href="#intro">Intro</a>
     &nbsp;&bullet;&nbsp;<a href="#use">Behind the scenes</a>
     &nbsp;&bullet;&nbsp;<a href="#use">How To Use</a>
     &nbsp;&bullet;&nbsp;<a href="#ref">Credits</a>
-</p>
+</center>
 
 <a id="intro"></a>
 
