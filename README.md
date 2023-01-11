@@ -38,10 +38,10 @@ This not only takes time, but it can also kill the creative process.
 # Behind the scenes
 Here is how it actually works:
 
-1. After uploading an audio file, it is transformed into a numeric representation (constant-Q transformation) that can be thought of as an image (i.e. a spectrogramm).
-1. This image is split into multiple images, the exact number varies depending on how long the audio file is.
-1. On all of these images, the CNN will detect the notes played.
-1. After some post-processing to bring the predictions into the correct shape, the frontend shows the output.
+1. **Upload audio**: After uploading an audio file (a guitar recording), it is transformed into a numeric representation (constant-Q transformation) that can be thought of as an image (i.e. a spectrogram).
+1. **Transform data**: This image is split into multiple images, the exact number varies depending on how long the audio file is.
+1. **Smart transcription**: On all of these images, the swizzle model (a CNN) will detect and classify the notes played.
+1. **Output tabs**: After post-processing to bring the predictions into the correct shape, the frontend shows the output tabs.
 
 <a id="use"></a>
 
