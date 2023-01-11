@@ -430,7 +430,7 @@ def main(verbose: int = 3):
     # p.save_output()
 
     # check whether output is correct
-    # p._test()
+    p._test()
 
     print(p.output['windows'])
 

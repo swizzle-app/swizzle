@@ -12,6 +12,7 @@
 #############################################
 from preprocessing.funnel import Funnel
 from preprocessing.prepro import PreProcessor
+
 import os
 import logging
 
@@ -77,6 +78,6 @@ if __name__ == "__main__":
 
     r = False
     save = True
-    filter = 'solo'
+    filter = '' # solo, comp or empty
     
     generate_training_data(verbose=4, r=r, save=save, subset=1, filter=filter)
