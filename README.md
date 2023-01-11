@@ -15,7 +15,7 @@
 
 <p align=center>
     <a href="#intro">Intro</a>
-    &nbsp;&bullet;&nbsp;<a href="#use">Behind the scenes</a>
+    &nbsp;&bullet;&nbsp;<a href="#bts">Behind the scenes</a>
     &nbsp;&bullet;&nbsp;<a href="#use">How To Use</a>
     &nbsp;&bullet;&nbsp;<a href="#ref">Credits</a>
 </p>
@@ -33,7 +33,7 @@ This not only takes time, but it can also kill the creative process.
 
 **And all this, easily done from your browser.**
 
-<a id="bhs"></a>
+<a id="bts"></a>
 
 # Behind the scenes
 Here is how it actually works:
