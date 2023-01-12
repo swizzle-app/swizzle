@@ -6,11 +6,11 @@
     #     #  #   #  #     #   #      #     #  #
 ####       ##     ##      #  #####  #####  #   ###
 
+
 #############################################
 #                   IMPORTS                 #
 #############################################
 
-#various
 import datetime
 import pathlib
 import IPython.display as display
@@ -39,11 +39,11 @@ from keras.layers import Conv2D, MaxPooling2D
 from keras.callbacks import ReduceLROnPlateau
 from keras import backend as K
 
-#############################################
-#                   CONSTANTS               #
-#############################################
-
 RSEED = 42
+
+#############################################
+#                   MODEL                   #
+#############################################
 
 class swizzle_model:
 
@@ -75,7 +75,7 @@ class swizzle_model:
         tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.INFO)
 
 
-    def load_files(self, file_name = str):
+    def load_files(self, file_name: str):
 
         IMAGES = np.load(self.INPUTPATH + 'training_data.npz')
         annots = np.load(self.INPUTPATH + 'training_labels.npz')
@@ -84,7 +84,7 @@ class swizzle_model:
         return IMAGES, annots
 
 
-    def data_split(self, IMAGES, annots, file_name = str):
+    def data_split(self, IMAGES, annots, file_name: str):
 
         self.IMAGES = IMAGES
         self.annots = annots
@@ -201,6 +201,7 @@ class swizzle_model:
 
 
     def predict_model(self):
+        swizzle_model = keras.models.load_model("../app/model/swizzle_model")
         self.model_output = self.swizzle_model.predict(self.test_images)
         self.logger.info(f"swizzle is doing the magic :)")
 
