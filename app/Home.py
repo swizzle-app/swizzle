@@ -1,16 +1,16 @@
 # SWIZZLE - AI GENERATED MUSIC NOTATION FOR SONGS
 
 
-
 # ----------import python packages----------
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import numpy as np
-import os
+#import numpy as np
+#import os
 import math
 import time
-import plotly.graph_objects as go
+#import plotly.graph_objects as go
+from tensorflow import keras  
 
 # ----------Page layout----------
 st.set_page_config(layout = "wide")
@@ -18,6 +18,7 @@ st.set_page_config(layout = "wide")
 # ----------import user packages----------
 from preprocessing.funnel import Funnel
 from preprocessing.prepro import PreProcessor
+from postprocessing.postpro import PostProcessor
 
 # ----------Setup state session in streamlit----------
 if "page" not in st.session_state:
@@ -57,10 +58,10 @@ if st.session_state.page == 0:
             
             # -----Upload  WAV file------
             st.write('### Upload your WAV file')  
-            file_uploader = st.file_uploader(label=" ", type=[".wav"]) #, ".wave", ".flac", ".mp3", ".ogg"])
+            audio_file = st.file_uploader(label=" ", type=[".wav"]) #, ".wave", ".flac", ".mp3", ".ogg"])
             
             # -----Store variable with state session------
-            st.session_state['file_uploader'] = file_uploader
+            st.session_state['audio_file'] = audio_file
             
             #-----Swizzle Button------
             st.write('')
@@ -70,34 +71,32 @@ if st.session_state.page == 0:
                 
                 #-----Swizzle Spinner------
                 with st.spinner('Swizzle it...'):
-                    time.sleep(2)
                 
-                #-----Swizzle Spinner------
-                latest_iteration = st.empty()
-                bar = st.progress(0)
-                for i in range(100):
-                    latest_iteration.text(f'Iteration {i+1}')
-                    bar.progress(i + 1)
-                    time.sleep(0.02)
+                    #-----------Pre-Processing -----------
+                    p = PreProcessor()
+                    f = Funnel(p)
+                    X = f.process_data(audio_file)
+
+                    st.session_state['pre_output'] = X
+
+                    #-----------Prediction Test-----------
+                    swizzle_model = keras.models.load_model("../app/model/swizzle_model")
+                    y = swizzle_model.predict(X)
+                    st.session_state['y'] = y
+
+                    #-----------Post-Processing-----------
+                    postpro = PostProcessor()
+                    post_pro_output = postpro.postprocess_data(y)
+                    
+                    # -----Store variable with state session------
+                    st.session_state['post_pro_output'] = post_pro_output
                 
-                #-----------Pre-Processing -----------
-                # p = PreProcessor()
-                # f = Funnel(p)
-                # X= f.process_data(file_to_be_uploaded)
-
-                #-----------Prediction Test-----------
-                # with open(PATH,'rb') as f:
-                # model.predict(X)
-
-                #-----------Post-Processing-----------
-                #postprocess_data(data)
-                #Postpro = PostProcessor()
+                #-----------Guitar Tabs button-----------
                 st.write('')
                 st.write('### Enjoy your guitar tabs!')
                 st.write('')
-                st.button("Guitar Tabs",on_click=nextpage,disabled=(st.session_state.page > 3))
-         
-             
+                st.button("Get guitar tabs",on_click=nextpage,disabled=(st.session_state.page > 3))
+                     
 # -----------------------------Page 2 (Guitar tabs)-------------------------------     
 elif st.session_state.page == 1:
     with placeholder.container():
@@ -119,34 +118,41 @@ elif st.session_state.page == 1:
             st.markdown("You can find the code on our [Github](https://github.com/swizzle-app/swizzle)")
 
         # ----------Create an dummy array for testing 6x21----------
-        new = pd.DataFrame({'pos': [1, 2, 3, 4,5,6,7,8,9, 10, 11, 12,13,14,15,16,17,18,19,20,21,22,23,24],
-                    'string': ['E','A','D','G','B','e','B','G','E','A','D','G','B','e','B','G','B','e','B','G','B','B','G','B'],
-                    'fret': [1,2,3,4,5,6,5,4,1,2,3,4,5,6,5,4,5,6,5,4,2,5,4,2]})
+        # new = pd.DataFrame({'pos': [1, 2, 3, 4,5,6,7,8,9, 10, 11, 12,13,14,15,16,17,18,19,20,21,22,23,24],
+        #             'string': ['E','A','D','G','B','e','B','G','E','A','D','G','B','e','B','G','B','e','B','G','B','B','G','B'],
+        #             'fret': [1,2,3,4,5,6,5,4,1,2,3,4,5,6,5,4,5,6,5,4,2,5,4,2]})
         
         # -----Page layout and setup session state------
         st.image('media/swizzle_logo.png', width=400)
         st.markdown("---")
-    
         left_column, right_column = st.columns(2)
-        file_uploader = st.session_state['file_uploader']
+        audio_file = st.session_state['audio_file']
+        post_pro_output = st.session_state['post_pro_output']
         
+        print(st.session_state.pre_output)
+        print(st.session_state.y)
+        print(post_pro_output)
+
+
+
+
         with left_column:
             
             #-----------Play song-----------
             st.write('### Play your song')
             st.write ("")
-            st.audio(file_uploader, format="audio/wav", start_time=0, sample_rate=None)
+            st.audio(audio_file, format="audio/wav", start_time=0, sample_rate=None)
         
             #-----------DISPLAY FILE-----------
-            if file_uploader:
-                st.write("Song: ", file_uploader.name)
+            if audio_file:
+                st.write("Song: ", audio_file.name)
 
         # ----------Setup variables for the for-loop----------
-        j = len(new)/10
+        j = len(post_pro_output)/10
         j = math.ceil(j)
-        l=10
-        s=0
-        tab=new[s:l]
+        u_bound=10
+        l_bound=0
+        tab=post_pro_output[l_bound:u_bound]
         
         # -----Page layout and session state------
         st.write("---")
@@ -158,7 +164,7 @@ elif st.session_state.page == 1:
         
         # ----------Show guitar tabs using plotly express scatter plot----------
         for i in range(j):    
-            tab=new[s:l]
+            tab = post_pro_output[l_bound:u_bound]
             
             fig = px.scatter(tab,y="string", x="pos",text='fret', category_orders={"string": ["e", "B", "G", "D", "A","E"]},width=800, height=400,
             labels={"string": "","pos": ""})
@@ -186,5 +192,5 @@ elif st.session_state.page == 1:
             st.plotly_chart(fig)
 
             # ----------Print guitar tab patterns with 10 tones each----------
-            l += 10
-            s += 10
+            l_bound += 10
+            u_bound += 10
