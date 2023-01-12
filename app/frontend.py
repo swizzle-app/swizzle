@@ -93,8 +93,8 @@ if st.session_state.page == 0:
                     # -----Store variable with state session------
                     st.session_state['post_pro_output'] = post_pro_output
                 
-                np.set_printoptions(threshold=np.inf)
-                st.write(np.round(st.session_state.y,2))
+                #np.set_printoptions(threshold=np.inf)
+                #st.write(np.round(st.session_state.y,2))
                 
                 
                 #-----------Guitar Tabs button-----------
