@@ -135,7 +135,7 @@ elif st.session_state.page == 1:
         post_pro_output = st.session_state['post_pro_output']
         
         #print(st.session_state.pre_output)
-        print(st.session_state.y)
+        #print(st.session_state.y)
         #print(post_pro_output)
 
 
@@ -186,21 +186,22 @@ elif st.session_state.page == 1:
             fig.update_xaxes(gridcolor='white',showgrid=True,showticklabels=True)
             fig.update_layout(font=dict(family="Courier New, monospace",size=18,color="Black"))
             #These include "Arial", "Balto", "Courier New", "Droid Sans",, "Droid Serif", "Droid Sans Mono", "Gravitas One", "Old Standard TT", "Open Sans", "Overpass", "PT Sans Narrow", "Raleway", "Times New Roman".
-            fig.update_layout(xaxis = dict(tickfont = dict(size=20)))
-            fig.update_layout(yaxis = dict(tickfont = dict(size=20), tickvals= [0,1,2,3,4,5],ticktext=["E","A","D","G","B","e"]))
+            fig.update_layout(xaxis = dict(tickfont = dict(size=20,color="black")))
+            fig.update_layout(yaxis = dict(tickfont = dict(size=20,color="black"), tickvals= [0,1,2,3,4,5],ticktext=["E","A","D","G","B","e"]))
             fig.add_hline(y=0,line_width=1)
             fig.add_hline(y=1,line_width=1)
             fig.add_hline(y=2,line_width=1)   
             fig.add_hline(y=3,line_width=1)
             fig.add_hline(y=4,line_width=1)
             fig.add_hline(y=5,line_width=1)
+            #fig.add_vline(x=0,line_width=1)
 
             fig.update_layout(font_family="Arial", showlegend=True)
             fig.update_yaxes(col=1,range=[-1,6+1])
             
             fig.add_annotation(dict(font=dict(color='black',size=20),
                                         x=0,
-                                        y=0.5,
+                                        y=0.56,
                                         showarrow=False,
                                         text="T",
                                         textangle=0,
@@ -209,7 +210,7 @@ elif st.session_state.page == 1:
                                         yref="paper"))
             fig.add_annotation(dict(font=dict(color='black',size=20),
                                         x=0,
-                                        y=0.4,
+                                        y=0.44,
                                         showarrow=False,
                                         text="A",
                                         textangle=0,
@@ -218,7 +219,7 @@ elif st.session_state.page == 1:
                                         yref="paper"))
             fig.add_annotation(dict(font=dict(color='black',size=20),
                                         x=0,
-                                        y=0.3,
+                                        y=0.25,
                                         showarrow=False,
                                         text="B",
                                         textangle=0,
