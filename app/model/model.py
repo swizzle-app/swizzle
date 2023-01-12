@@ -45,7 +45,7 @@ RSEED = 42
 #                   MODEL                   #
 #############################################
 
-class swizzle_model:
+class SwizzleModel:
 
     def __init__(self, 
                  BATCH_SIZE=128, 
@@ -172,7 +172,7 @@ class swizzle_model:
         metrics =['accuracy']
         optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
         loss='categorical_crossentropy'
-        swizzle_model.compile(loss=loss, optimizer=optimizer, metrics=['accuracy'])
+        self.swizzle_model.compile(loss=loss, optimizer=optimizer, metrics=['accuracy'])
    
     
     def train_model(self):
@@ -195,7 +195,7 @@ class swizzle_model:
                                     callbacks=[learning_rate_reduction],
         )
 
-        score = swizzle_model.evaluate(self.test_images,self.test_annots,verbose=0)
+        score = self.swizzle_model.evaluate(self.test_images,self.test_annots,verbose=0)
         print('Test Loss : {:.4f}'.format(score[0]))
         print('Test Accuracy : {:.4f}'.format(score[1]))
 
@@ -220,7 +220,7 @@ class swizzle_model:
             path += '/'
 
         # save files if data is present
-            swizzle_model.save(self.save_path + 'swizzle_model')
+        self.swizzle_model.save(self.save_path + 'swizzle_model')
         self.logger.info(f"swizzle model is being saved :)")
 
 
