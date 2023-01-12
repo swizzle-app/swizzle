@@ -11,10 +11,6 @@
 #                   IMPORTS                 #
 #############################################
 import numpy as np
-import librosa
-import librosa.display
-import jams
-import os
 import logging
 
 
@@ -62,6 +58,10 @@ class PostProcessor:
 
             r = []
             pos = 0
+
+            # make values in y integers, so they are only 1 or 0 (the CNN outputs floats between 0 and 1)
+            y = np.round(y)
+
 
             # loop over every frame
             for idx, frame in enumerate(y):
