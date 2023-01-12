@@ -103,8 +103,7 @@ elif st.session_state.page == 1:
     
         # -----Create Sidebar------
         with st.sidebar:
-            st.write("")
-            st.write("")
+            st.button("Go back home",on_click=restart)
             st.write("")
             st.write("")
             st.write("")
@@ -152,39 +151,44 @@ elif st.session_state.page == 1:
         j = math.ceil(j)
         u_bound=10
         l_bound=0
-        tab=post_pro_output[l_bound:u_bound]
-        
+        #tab=post_pro_output[l_bound:u_bound]
+        df=pd.DataFrame(post_pro_output, columns=["pos", "string", "fret"])
+
         # -----Page layout and session state------
         st.write("---")
         left_column, center_column,right_column = st.columns(3)
         with left_column:
             st.write('### Guitar tabs')
-        with right_column:
-            st.button("Home",on_click=restart)
+        #with right_column:
+            #st.button("Home",on_click=restart)
         
         # ----------Show guitar tabs using plotly express scatter plot----------
         for i in range(j):    
-            tab = post_pro_output[l_bound:u_bound]
+            tab = df[l_bound:u_bound]
             
-            fig = px.scatter(tab,y="string", x="pos",text='fret', category_orders={"string": ["e", "B", "G", "D", "A","E"]},width=800, height=400,
-            labels={"string": "","pos": ""})
+            #fig = px.scatter(tab,y=1, x=0,text=2,width=800, height=600,
+            #labels={1: "",0: ""}) #category_orders={1: ["e", "B", "G", "D", "A","E"]}
+            
+            fig = px.scatter(tab,y="string", x="pos",text='fret',width=800, height=350,
+            labels={"string": "","pos": ""}) #, category_orders={"string": ["e", "B", "G", "D", "A","E"]
             
             # -----Scatter Plot settings------
             fig.update_traces(marker_size=20)#, color='white')
             fig.update_traces(textposition="middle center")
             fig.update_traces(marker=dict(color='White'))
             fig.update_yaxes(gridcolor='black',showgrid=True)#, griddash='dash'
-            fig.update_xaxes(gridcolor='white',showgrid=True,showticklabels=False)
+            fig.update_xaxes(gridcolor='white',showgrid=True,showticklabels=True)
             fig.update_layout(font=dict(family="Courier New, monospace",size=18,color="Black"))
             #These include "Arial", "Balto", "Courier New", "Droid Sans",, "Droid Serif", "Droid Sans Mono", "Gravitas One", "Old Standard TT", "Open Sans", "Overpass", "PT Sans Narrow", "Raleway", "Times New Roman".
             fig.update_layout(xaxis = dict(tickfont = dict(size=20)))
-            fig.update_layout(yaxis = dict(tickfont = dict(size=20)))
-            fig.add_hline(y="E",line_width=1)
-            fig.add_hline(y="A",line_width=1)
-            fig.add_hline(y="D",line_width=1)   
-            fig.add_hline(y="G",line_width=1)
-            fig.add_hline(y="B",line_width=1)
-            fig.add_hline(y="e",line_width=1)
+            fig.update_layout(yaxis = dict(tickfont = dict(size=20), tickvals= [0,1,2,3,4,5],ticktext=["E","A","D","G","B","e"]))
+            fig.add_hline(y=0,line_width=1)
+            fig.add_hline(y=1,line_width=1)
+            fig.add_hline(y=2,line_width=1)   
+            fig.add_hline(y=3,line_width=1)
+            fig.add_hline(y=4,line_width=1)
+            fig.add_hline(y=5,line_width=1)
+
             fig.update_layout(font_family="Arial", showlegend=True)
             fig.update_yaxes(col=1,range=[-1,6+1])
             
