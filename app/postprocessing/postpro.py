@@ -60,18 +60,22 @@ class PostProcessor:
             pos = 0
             next_pos = False
 
-            # make values in y integers, so they are only 1 or 0 (the CNN outputs floats between 0 and 1)
-            y = np.round(y)
+            # map probability outputs of the cnn to 1 and 0 using argmax
+            y_corr = np.zeros_like(y)
+
+            for fidx, frame in enumerate(y):
+                for sidx, string in enumerate(frame):
+                    y_corr[fidx][sidx][np.argmax(string)] = 1
 
 
             # loop over every frame
-            for idx, frame in enumerate(y):
-                self.logger.info(f"Processing frame {idx+1}/{y.shape[0]}.")
+            for fidx, frame in enumerate(y_corr):
+                self.logger.info(f"Processing frame {fidx+1}/{y.shape[0]}.")
                 # loop over every string
-                for string, frets in enumerate(frame):
+                for sidx, string in enumerate(frame):
                     # extract fret indices
-                    fret_idx = np.where(frets == 1)
-                    self.logger.debug(f"Fret idices for string {string} at position {pos}: {fret_idx}")
+                    fret_idx = np.where(string == 1)
+                    self.logger.debug(f"Fret idices for string {sidx} at position {pos}: {fret_idx}")
                     # reshape data to output shape
                     if np.sum(fret_idx) > 0:
                         next_pos = True
@@ -79,13 +83,13 @@ class PostProcessor:
                             # safety loop if multiple elements per string
                             # this shouldn't happen, but who knows
                             for j in i:
-                                r.append([pos, string, np.squeeze(j)-1])
+                                r.append([pos, sidx, np.squeeze(j)-1])
                 
                 # next position
                 if next_pos: 
                     pos += 1
                     next_pos = False
-            
+
             self.logger.info("Done.")
 
             if test.size > 0:
@@ -109,7 +113,7 @@ if __name__ == "__main__":
                             [0, 0.9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                             [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0.2, 0, 0, 0, 0, 0, 0, 0, 0],
-                            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [0.2, 0, 0.2, 0, 0, 0.3, 0, 0, 0, 0.4, 0, 0, 0.1, 0, 0, 0, 0, 0, 0, 0, 0],
                             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                             [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
                            ],
@@ -135,7 +139,7 @@ if __name__ == "__main__":
                                 [0, 0, 0],
                                 # A string: not played
                                 [0, 2, 2],
-                                # G string: not played
+                                [0, 3, 8],
                                 [0, 4, 9],
                                 [0, 5, 0],
                                 [1, 0, 0],
