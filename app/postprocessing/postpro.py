@@ -12,6 +12,7 @@
 #############################################
 import numpy as np
 import logging
+import os
 
 
 #############################################
@@ -106,13 +107,13 @@ class PostProcessor:
             self.logger.error("Data is in the wrong shape (expects (n, 6, 21).")
     
 
-if __name__ == "__main__":
+def test():
 
     mock_data = np.array([
                            [
                             [0, 0.9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0.2, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0.8, 0, 0, 0, 0, 0, 0, 0, 0, 0.2, 0, 0, 0, 0, 0, 0, 0, 0],
                             [0.2, 0, 0.2, 0, 0, 0.3, 0, 0, 0, 0.4, 0, 0, 0.1, 0, 0, 0, 0, 0, 0, 0, 0],
                             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                             [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -127,15 +128,15 @@ if __name__ == "__main__":
                            ],
                            [
                             [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                            [1, 0, 0, 0, 0, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [0.9, 0, 0, 0, 0, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                             [0, 0, 0, 0.8, 0, 0, 0, 0, 0, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                             [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
                            ]
                         ])
 
-    mock_results = np.array([
+    mock_results = np.array([  # P, S, F
                                 [0, 0, 0],
                                 # A string: not played
                                 [0, 2, 2],
@@ -146,12 +147,26 @@ if __name__ == "__main__":
                                 # A string: not played
                                 [1, 2, 2],
                                 # G string: not played
-                                [1, 4, 9],
+                                [1, 4, 8],
                                 [1, 5, 0]
                            ])
 
-    # print(f"Mock data shape: {mock_data.shape}")
-    # print(f"Mock results shape: {mock_results.shape}")
+    print(f"Mock data shape: {mock_data.shape}")
+    print(f"Mock results shape: {mock_results.shape}")
 
     p = PostProcessor(verbose=4)
     results = p.postprocess_data(mock_data, mock_results)
+
+
+def singlesong():
+    # cwd = os.getcwd()
+    # print(cwd)
+    y = np.load('app/model/model_output_singlesong.npy')
+    pp = PostProcessor()
+    
+    print(pp.postprocess_data(y))
+
+
+if __name__ == "__main__":
+    test()
+    # singlesong()

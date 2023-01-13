@@ -16,7 +16,7 @@ from preprocessing.prepro import PreProcessor
 import os
 import logging
 
-def generate_training_data(verbose: int = 0, r: bool = False, save: bool = True, subset: float = 1, filter: str = None):
+def generate_training_data(verbose: int = 0, r: bool = False, save: bool = True, subset: float = 1, filter: str = None, remove_noise: float = 0.95):
     """Generates Preprocessor and Funnel objects to process the dataset. Returns training data.
 
     Args:
@@ -45,20 +45,20 @@ def generate_training_data(verbose: int = 0, r: bool = False, save: bool = True,
         p = PreProcessor(verbose=verbose)
         f = Funnel(p, verbose=verbose, f=filter)
 
+        if r == False and save == False:
+            logger.info("Data will neither be returned nor saved. Maybe your forgot to set your output (parameters r and/or save)?")
+
         # if data should be returned, return function's return
         if r:
-            return f.get_training_data(r=r, save=save, subset=subset, filter=filter)
+            return f.get_training_data(r=r, save=save, subset=subset, filter=filter, remove_noise=remove_noise)
         
         # else just save the files
         else:
-            f.get_training_data(r=r, save=save, subset=subset, filter=filter)
+            f.get_training_data(r=r, save=save, subset=subset, filter=filter, remove_noise=remove_noise)
 
         logger.info("-"*50)
         logger.info("Finished training data generation.")
         logger.info("-"*50)
-
-        if r == False and save == False:
-            logger.info("Data will neither be returned nor saved. Maybe your forgot to set your output (parameters r and/or save)?")
     
     else:
         logger.warning(f"Wrong working directory (currently in : {os.getcwd().split('/')[-1]})")
@@ -80,4 +80,4 @@ if __name__ == "__main__":
     save = True
     filter = '' # solo, comp or empty
     
-    generate_training_data(verbose=4, r=r, save=save, subset=1, filter=filter)
+    generate_training_data(verbose=4, r=r, save=save, subset=1, filter=filter, remove_noise=0.95)

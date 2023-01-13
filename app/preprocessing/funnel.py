@@ -54,7 +54,7 @@ class Funnel:
         return print(f"I'm alive!")
 
 
-    def get_training_data(self, r: bool = True, save: bool = False, subset: float = 1, filter: str = None):
+    def get_training_data(self, r: bool = True, save: bool = False, subset: float = 1, filter: str = None, remove_noise: float = 0.95):
         """Generates training data (X and y) from the GuitarSet dataset. Input can be filtered by filenames (e.g. "solo" or "comp").
 
         Args:
@@ -62,6 +62,7 @@ class Funnel:
             save (bool, optional): Whether to save output as npz files. Defaults to False.
             subset (float, optional): Fraction of input to process. Defaults to 1.
             filter (str, optional): Filter for input filenames. Defaults to None.
+            remove_noise (float, optional): Remove fraction of frames that have no notes played. Defaults to 0.95.
 
         If r is set to True, returns:
             list: X (data)
@@ -97,6 +98,13 @@ class Funnel:
             # Preprocess audio and labels
             self.p.preprocess_audio(audio)
             self.p.preprocess_labels(labels)
+
+            # remove empty frames
+            if remove_noise > 1: remove_noise = 1
+            if remove_noise < 0: remove_noise = 0
+            remove_noise = float(remove_noise)
+            if remove_noise > 0:
+                self.p.remove_noise(fraction=remove_noise)
 
             # store each point in X and y
             for datapoint in self.p.output.get('windows'):

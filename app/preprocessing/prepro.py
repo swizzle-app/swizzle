@@ -145,7 +145,7 @@ class PreProcessor:
         return audio, jams.load(labelfile)
 
 
-    def preprocess_audio(self, data: np.ndarray, training: bool = False):
+    def preprocess_audio(self, data: np.array, training: bool = False):
         """Normalizes audio, calculates CQT and hands data over to _get_windows() for sliding window generation. Data is stored in self.output['data'].
 
         Args:
@@ -188,7 +188,7 @@ class PreProcessor:
         self._get_windowlabels(notes_played)
 
 
-    def _pad_frame(self, data: np.ndarray, pad_left: bool):
+    def _pad_frame(self, data: np.array, pad_left: bool):
         """Padding function to account for windows which left or right bounds are < 0 or > len(data)
 
         Args:
@@ -218,7 +218,7 @@ class PreProcessor:
         return data
 
 
-    def _get_windows(self, data, training: bool = False):
+    def _get_windows(self, data: np.array, training: bool = False):
         """Sliding window function to extract windows with set width from an input array. Windows are stored in self.output['windows'].
 
         Args:
@@ -228,7 +228,7 @@ class PreProcessor:
         """
 
         # initialize windows array
-        windows = np.zeros(shape=(len(data), self.bins, self.winwidth))
+        windows = np.zeros(shape=(data.shape[0], self.bins, self.winwidth))
 
         if training:
 
@@ -251,7 +251,7 @@ class PreProcessor:
 
             # f_idx/fbin: different frequency bins
             # t_idx/tpoint: different timepoints
-            for t_idx in range(len(data)):
+            for t_idx in range(data.shape[0]):
                 # set left and right bounds, so that item at t_idx is centered
                 lbound = t_idx - half_width
                 rbound = t_idx + half_width + 1
@@ -259,7 +259,7 @@ class PreProcessor:
                 self.logger.info(f"Extracting window {t_idx}/{len(data)-1}. Frames: {lbound, rbound}", )
 
                 # if bounds > 0 and < len(data), simply extract window
-                if lbound >= 0 and rbound < len(data):
+                if lbound >= 0 and rbound < data.shape[0]:
                     windows[t_idx] = data[lbound:rbound].T
                 
                 # if left bound below zero, pad left
@@ -267,7 +267,7 @@ class PreProcessor:
                     windows[t_idx] = self._pad_frame(data[0:rbound], True).T
 
                 # if right bound greater than input length, pad right
-                elif rbound >= len(data):
+                elif rbound >= data.shape[0]:
                     windows[t_idx] = self._pad_frame(data[lbound:], False).T
 
         else:
@@ -283,7 +283,7 @@ class PreProcessor:
 
 
     def _get_windowfrets(self, windowlabels, n_windows: int):
-        """Converts MIDI note values to fret positions. Windows are stored in self.output['windowlabels'].
+        """Converts MIDI note values to fret positions in a 6x21 array. Windows are stored in self.output['windowlabels'].
 
         Args:
             windowlabels (list): list with windowlabels
@@ -361,6 +361,39 @@ class PreProcessor:
         self._get_windowfrets(windows, n_windows)
 
 
+    def remove_noise(self, fraction: float = 0.95):
+        noise_frames_idx = []
+        data_frames_idx = []
+
+        # loop through all frames to find empty frames
+        for fidx, frame in enumerate(self.output['windowlabels']):
+            
+            null_strings = 0
+
+            # loop over all strings in frame
+            for string in frame:
+
+                # read out indices of '1's
+                zero_idx = np.where(string==1)
+
+                # if '1' is at position 0, increase null_string counter
+                if np.squeeze(zero_idx).size == 1 and np.squeeze(zero_idx) == 0:
+                    null_strings += 1
+
+            # check if all strings were not played
+            if null_strings == 6:
+                noise_frames_idx.append(fidx)
+            else:
+                data_frames_idx.append(fidx)
+        
+        # creating mask
+        mask = np.ones(len(self.output['windows']), dtype=bool)
+        noise_frames_idx = noise_frames_idx[:int(len(noise_frames_idx)*fraction)]
+        mask[noise_frames_idx] = False
+
+        # remove found indices from windows and windowlabels via masking
+        self.output['windows'] = self.output['windows'][mask]
+        self.output['windowlabels'] = self.output['windowlabels'][mask]
 
     def save_output(self, path: str = "", suffix: list = ['data', 'labels']):
         """Saves data and labels stored as .npz files.
@@ -423,14 +456,17 @@ def main(verbose: int = 3):
     audio, labels = p.load_files(files[0])
 
     # Preprocess audio and labels
-    p.preprocess_audio(data=audio, training=False)
-    # p.preprocess_labels(labels)
+    p.preprocess_audio(data=audio, training=True)
+    p.preprocess_labels(labels)
+
+    # remove noise
+    p.remove_noise(fraction = 0.95)
 
     # save output
     # p.save_output()
 
     # check whether output is correct
-    p._test()
+    # p._test()
 
     print(p.output['windows'])
 
