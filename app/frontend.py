@@ -80,7 +80,7 @@ if st.session_state.page == 0:
                     st.session_state['pre_output'] = X
 
                     #-----------Prediction Test-----------
-                    swizzle_model = keras.models.load_model("../app/model/swizzle_model_v2", compile=False)
+                    swizzle_model = keras.models.load_model("../app/model/swizzle_model_v3", compile=False)
                     y = swizzle_model.predict(X)
                     st.session_state['y'] = y
 
