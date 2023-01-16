@@ -472,14 +472,14 @@ def main(verbose: int = 3):
     files = [f for f in files if 'solo' in f]
     
     # get audio and label file for first filename
-    audio, labels = p.load_files(files[0])
+    audio, labels = p.load_files("03_BN1-129-Eb_solo.jams", rec_mode='pd')
 
     # Preprocess audio and labels
     p.preprocess_audio(data=audio, training=True)
     p.preprocess_labels(labels)
 
     # remove noise
-    p.remove_noise(fraction = 0.95)
+    p.remove_noise(fraction = 0.90)
 
     # save output
     p.save_output()
