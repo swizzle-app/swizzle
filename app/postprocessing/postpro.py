@@ -68,23 +68,42 @@ class PostProcessor:
                 for sidx, string in enumerate(frame):
                     y_corr[fidx][sidx][np.argmax(string)] = 1
 
+            # input: n x (6, 21)
+            # convert frame to midi note (string_base_note + fret)
+            # store midi note and frame index in midi_curr, idx_curr
+            # continue until new midi note: midi_new, idx_new
+            # get index of last seen midi_curr
+            # remove positions idx_curr+1 to idx_new
+
+            midi_curr = 0
 
             # loop over every frame
             for fidx, frame in enumerate(y_corr):
                 self.logger.info(f"Processing frame {fidx+1}/{y.shape[0]}.")
-                # loop over every string
+               # loop over every string
                 for sidx, string in enumerate(frame):
                     # extract fret indices
                     fret_idx = np.where(string == 1)
-                    self.logger.debug(f"Fret idices for string {sidx} at position {pos}: {fret_idx}")
+                    self.logger.debug(f"Fret indices for string {sidx} at position {pos}: {fret_idx}")
                     # reshape data to output shape
                     if np.sum(fret_idx) > 0:
-                        next_pos = True
-                        for i in fret_idx:
-                            # safety loop if multiple elements per string
-                            # this shouldn't happen, but who knows
-                            for j in i:
-                                r.append([pos, sidx, np.squeeze(j)-1])
+                        # extract empty string midi value
+                        esmv = STANDARDE[sidx]
+                        # check if note is new
+                        if esmv + fret_idx - 1 != midi_curr:
+                            # allow for position to count up
+                            next_pos = True
+                            # append frame if new note found
+                            for i in fret_idx:
+                                # safety loop if multiple elements per string
+                                # this shouldn't happen, but who knows
+                                for j in i:
+                                    r.append([pos, sidx, np.squeeze(j)-1])
+                            # set midi_curr new note
+                            midi_curr = esmv + fret_idx - 1
+                        # just do nothing if note is already known
+                        else:
+                            next_pos = False
                 
                 # next position
                 if next_pos: 
@@ -133,7 +152,31 @@ def test():
                             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                             [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                           ]
+                           ],
+                           [
+                            [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [0.9, 0, 0, 0, 0, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0.8, 0, 0, 0, 0, 0, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                           ],
+                           [
+                            [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [0.9, 0, 0, 0, 0, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0.8, 0, 0, 0, 0, 0, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                           ],
+                           [
+                            [0, 0.9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0.8, 0, 0, 0, 0, 0, 0, 0, 0, 0.2, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [0.2, 0, 0.2, 0, 0, 0.3, 0, 0, 0, 0.4, 0, 0, 0.1, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                           ],
                         ])
 
     mock_results = np.array([  # P, S, F
@@ -148,7 +191,13 @@ def test():
                                 [1, 2, 2],
                                 # G string: not played
                                 [1, 4, 8],
-                                [1, 5, 0]
+                                [1, 5, 0],
+                                [2, 0, 0],
+                                # A string: not played
+                                [2, 2, 2],
+                                [2, 3, 8],
+                                [2, 4, 9],
+                                [2, 5, 0],
                            ])
 
     print(f"Mock data shape: {mock_data.shape}")
