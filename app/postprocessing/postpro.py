@@ -157,6 +157,8 @@ def test():
     p = PostProcessor(verbose=4)
     results = p.postprocess_data(mock_data, mock_results)
 
+    print(results)
+
 
 def singlesong():
     # cwd = os.getcwd()
