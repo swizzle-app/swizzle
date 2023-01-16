@@ -20,6 +20,8 @@ import os
 #                   CONSTANTS               #
 #############################################
 OUTPUTPATH = '../data/output/'
+AUDIOPATH = '../data/raw/'
+RECMODES = ['mm', 'mp', 'pd', 'po']
 
 
 class Funnel:
@@ -35,6 +37,9 @@ class Funnel:
         # save outputpath
         self.outputpath = outputpath
         self.filter = f
+
+        # help
+        self.possible_recmodes = {'all': 'all recording modes', 'mm': 'mono-mic', 'mp': 'mono-pickup_mix', 'pd': 'hex-pickup_debleeded', 'po': 'hex-pickup_original'}
 
         # setup logger
         FORMAT = "[%(levelname)8s][%(filename)s:%(lineno)4s - %(funcName)20s() ] %(message)s"
@@ -54,12 +59,14 @@ class Funnel:
         return print(f"I'm alive!")
 
 
-    def get_training_data(self, r: bool = True, save: bool = False, subset: float = 1, filter: str = None, remove_noise: float = 0.95):
+    def get_training_data(self, r: bool = True, save: bool = False, rec_modes: list = RECMODES, subset: float = 1, filter: str = None, remove_noise: float = 0.95):
         """Generates training data (X and y) from the GuitarSet dataset. Input can be filtered by filenames (e.g. "solo" or "comp").
+        Check out attribute "possible_recmodes" for keywords that can be given to rec_modes.
 
         Args:
             r (bool, optional): Whether the data should be returned. Defaults to True.
             save (bool, optional): Whether to save output as npz files. Defaults to False.
+            rec_modes (list, optional): What recording modes to consider. Defaults to all of them (['mm', 'mp', 'pd', 'po'])
             subset (float, optional): Fraction of input to process. Defaults to 1.
             filter (str, optional): Filter for input filenames. Defaults to None.
             remove_noise (float, optional): Remove fraction of frames that have no notes played. Defaults to 0.95.
@@ -68,6 +75,10 @@ class Funnel:
             list: X (data)
             list: y (labels)
         """
+
+        # checking recording modes
+        if 'all' in rec_modes:
+            rec_modes = RECMODES
 
         # get filenames in folder
         filenames = self.p.get_filenames()
@@ -92,31 +103,36 @@ class Funnel:
 
             self.logger.info(f"Processing file: {f} ({idx+1}/{len(filenames)})")
 
-            # get audio and label file for first filename
-            audio, labels = self.p.load_files(f)
+            # go through all recording modes wanted
+            for rmidx, rm in enumerate(rec_modes):
 
-            # Preprocess audio and labels
-            self.p.preprocess_audio(audio)
-            self.p.preprocess_labels(labels)
+                self.logger.info(f"--> recording mode: {rm} ({rmidx+1}/{len(rec_modes)})")
 
-            # remove empty frames
-            if remove_noise > 1: remove_noise = 1
-            if remove_noise < 0: remove_noise = 0
-            remove_noise = float(remove_noise)
-            if remove_noise > 0:
-                self.p.remove_noise(fraction=remove_noise)
+                # get audio and label file for first filename
+                audio, labels = self.p.load_files(f, rec_mode=rm)
 
-            # store each point in X and y
-            for datapoint in self.p.output.get('windows'):
-                X.append(datapoint)
+                # Preprocess audio and labels
+                self.p.preprocess_audio(audio)
+                self.p.preprocess_labels(labels)
 
-            for labelpoint in self.p.output.get('windowlabels'):
-                y.append(labelpoint)
+                # remove empty frames
+                if remove_noise > 1: remove_noise = 1
+                if remove_noise < 0: remove_noise = 0
+                remove_noise = float(remove_noise)
+                if remove_noise > 0:
+                    self.p.remove_noise(fraction=remove_noise)
+
+                # store each point in X and y
+                for datapoint in self.p.output.get('windows'):
+                    X.append(datapoint)
+
+                for labelpoint in self.p.output.get('windowlabels'):
+                    y.append(labelpoint)
 
         # save output into npz files if needed
         if save: 
             self.logger.info("Saving data.")
-            self._save_output(data=X, labels=y)
+            self._save_output(data=X, labels=y, suffix=str(int(remove_noise*100)))
         
         # return values if needed
         if r: 
@@ -165,15 +181,22 @@ class Funnel:
         if not os.path.exists(self.outputpath):
             os.makedirs(self.outputpath)
 
+        # set filter string
+        f = ""
+        if self.filter == "":
+            f = 'all'
+        else:
+            f = self.filter
+
         # save files
         if data != "":
-            np.savez(self.outputpath + "training" + "_" + "data" + self.filter + ".npz", data)
+            np.savez(self.outputpath + "training" + "_" + "data" + "_" + f + "_" + suffix + ".npz", data)
             self.logger.info(f'Data was saved under {self.outputpath}')
         else:
             self.logger.warning('No data to save!')
 
         if labels != "":
-            np.savez(self.outputpath + "training" + "_" + "labels" + self.filter + ".npz", labels)
+            np.savez(self.outputpath + "training" + "_" + "labels_" + f + "_" + suffix + ".npz", labels)
             self.logger.info(f'Labels were saved under {self.outputpath}')
         else:
             self.logger.warning('No labels to save!')

@@ -16,7 +16,7 @@ from preprocessing.prepro import PreProcessor
 import os
 import logging
 
-def generate_training_data(verbose: int = 0, r: bool = False, save: bool = True, subset: float = 1, filter: str = None, remove_noise: float = 0.95):
+def generate_training_data(verbose: int = 0, r: bool = False, save: bool = True, rec_modes: list = ['all'], subset: float = 1, filter: str = None, remove_noise: float = 0.95):
     """Generates Preprocessor and Funnel objects to process the dataset. Returns training data.
 
     Args:
@@ -50,11 +50,11 @@ def generate_training_data(verbose: int = 0, r: bool = False, save: bool = True,
 
         # if data should be returned, return function's return
         if r:
-            return f.get_training_data(r=r, save=save, subset=subset, filter=filter, remove_noise=remove_noise)
+            return f.get_training_data(r=r, save=save, rec_modes=rec_modes, subset=subset, filter=filter, remove_noise=remove_noise)
         
         # else just save the files
         else:
-            f.get_training_data(r=r, save=save, subset=subset, filter=filter, remove_noise=remove_noise)
+            f.get_training_data(r=r, save=save, rec_modes=rec_modes, subset=subset, filter=filter, remove_noise=remove_noise)
 
         logger.info("-"*50)
         logger.info("Finished training data generation.")
@@ -68,7 +68,7 @@ def generate_training_data(verbose: int = 0, r: bool = False, save: bool = True,
             os.chdir("app")
             logger.warning(f"Done.")
             print(r, save, subset, filter)
-            generate_training_data(verbose=verbose, r=r, save=save, subset=subset, filter=filter)
+            generate_training_data(verbose=verbose, r=r, save=save, rec_modes=rec_modes, subset=subset, filter=filter, remove_noise=remove_noise)
 
         else:
             logger.warning("Couldn't find \"app\" directory. Please change to it manually")
@@ -76,8 +76,17 @@ def generate_training_data(verbose: int = 0, r: bool = False, save: bool = True,
 
 if __name__ == "__main__":
 
-    r = False
-    save = True
-    filter = 'solo' # solo, comp or empty
-    
-    generate_training_data(verbose=4, r=r, save=save, subset=1, filter=filter, remove_noise=0.75)
+    ############### SET PARAMETERS HERE ###############
+
+    verbose = 4         # 0-4: verbosity of the function.
+    r = False           # True, False: return values to variable.
+    save = True         # True, False: save values to files.
+    rec_modes = ['all'] # recording modes to consider
+    subset = 1          # 0-1: fraction of data to sample
+    filter = 'solo'     # solo, comp, empty: song modes to consider. Empty string means take all.
+    remove_noise = 0.95 # 0-1: fraction of empty frames to remove.
+
+
+    ############### FUNCTION CALL #####################
+
+    generate_training_data(verbose=verbose, r=r, save=save, rec_modes=rec_modes, subset=subset, filter=filter, remove_noise=remove_noise)
