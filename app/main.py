@@ -14,6 +14,7 @@ from preprocessing.funnel import Funnel
 from preprocessing.prepro import PreProcessor
 
 import os
+import datetime
 import logging
 
 def generate_training_data(verbose: int = 0, r: bool = False, save: bool = True, rec_modes: list = ['all'], subset: float = 1, filter: str = None, remove_noise: float = 0.95):
@@ -26,6 +27,8 @@ def generate_training_data(verbose: int = 0, r: bool = False, save: bool = True,
         subset (float, optional): What fraction of the data to use (0-1). Defaults to 1 (all data).
         filter (str, optional): Filter the data (e.g. "solo" or "comp"). Defaults to None
     """
+
+    start_time = datetime.datetime.now()
 
     # setup logger
     FORMAT = "[%(levelname)8s][%(filename)s:%(lineno)4s - %(funcName)20s() ] %(message)s"
@@ -41,6 +44,7 @@ def generate_training_data(verbose: int = 0, r: bool = False, save: bool = True,
         logger.info("-"*50)
         logger.info("Starting training data generation.")
         logger.info("-"*50)
+        logger.info(f"Settings are Return: {r}, Save: {save}, Recording modes: {rec_modes}, Subset: {subset}, Filter: {filter}, Remove noise: {remove_noise}")
 
         p = PreProcessor(verbose=verbose)
         f = Funnel(p, verbose=verbose, f=filter)
@@ -59,20 +63,21 @@ def generate_training_data(verbose: int = 0, r: bool = False, save: bool = True,
         logger.info("-"*50)
         logger.info("Finished training data generation.")
         logger.info("-"*50)
+        end_time = datetime.datetime.now()
+        logger.info(f"Elapsed time: {end_time - start_time}")
+        logger.info("-"*50)
     
     else:
-        logger.warning(f"Wrong working directory (currently in : {os.getcwd().split('/')[-1]})")
+        logger.warning(f"Wrong working directory (currently in: {os.getcwd().split('/')[-1]})")
         logger.warning(f"Trying to get to correct working directory...")
 
         if "app" in os.listdir(cwd):
             os.chdir("app")
-            logger.warning(f"Done.")
-            print(r, save, subset, filter)
+            logger.warning(f"Success!")
             generate_training_data(verbose=verbose, r=r, save=save, rec_modes=rec_modes, subset=subset, filter=filter, remove_noise=remove_noise)
 
         else:
             logger.warning("Couldn't find \"app\" directory. Please change to it manually")
-
 
 if __name__ == "__main__":
 
@@ -84,7 +89,7 @@ if __name__ == "__main__":
     rec_modes = ['all'] # ['mm', 'mp', 'pd', 'po']: recording modes to consider. Has to be a list.
     subset = 1          # 0-1: fraction of data to sample
     filter = 'solo'     # solo, comp, empty: song modes to consider. Empty string means take all.
-    remove_noise = 0.95 # 0-1: fraction of empty frames to remove.
+    remove_noise = 0.90 # 0-1: fraction of empty frames to remove.
 
 
     ############### FUNCTION CALL #####################
