@@ -362,6 +362,11 @@ class PreProcessor:
 
 
     def remove_noise(self, fraction: float = 0.95):
+        """Method to remove windows with no labels (i.e. timepoints in a song where no new note was played)
+
+        Args:
+            fraction (float, optional): Fraction of the empty windows to be removed. Defaults to 0.95.
+        """
         noise_frames_idx = []
         data_frames_idx = []
 
@@ -394,6 +399,7 @@ class PreProcessor:
         # remove found indices from windows and windowlabels via masking
         self.output['windows'] = self.output['windows'][mask]
         self.output['windowlabels'] = self.output['windowlabels'][mask]
+
 
     def save_output(self, path: str = "", suffix: list = ['data', 'labels']):
         """Saves data and labels stored as .npz files.
@@ -442,6 +448,19 @@ class PreProcessor:
         else:
             self.logger.warning("Labels testfile not found.")
 
+    
+    def _data_stats(self):
+        """logging data statistics. Namely number of windows with 0, 1 or more than 1 labels.
+        This function is used for evaluation and error analysis of the model.
+        """
+
+        for label in self.output['windowlabels']:
+            
+            continue
+
+
+        pass
+
 
 def main(verbose: int = 3):
     
@@ -463,7 +482,7 @@ def main(verbose: int = 3):
     p.remove_noise(fraction = 0.95)
 
     # save output
-    # p.save_output()
+    p.save_output()
 
     # check whether output is correct
     # p._test()

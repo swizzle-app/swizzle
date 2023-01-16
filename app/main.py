@@ -78,6 +78,6 @@ if __name__ == "__main__":
 
     r = False
     save = True
-    filter = '' # solo, comp or empty
+    filter = 'solo' # solo, comp or empty
     
-    generate_training_data(verbose=4, r=r, save=save, subset=1, filter=filter, remove_noise=0.95)
+    generate_training_data(verbose=4, r=r, save=save, subset=1, filter=filter, remove_noise=0.75)
