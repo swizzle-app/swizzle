@@ -85,18 +85,12 @@ if st.session_state.page == 0:
                 
                     #-----------Pre-Processing -----------
                     p = PreProcessor()
-                    # f = Funnel(p)
-                    # X = f.process_data(st.session_state['audiofile'])
                     audio, _ = librosa.load(audio_file, sr=22050, dtype=np.float32, mono=True)
                     p.preprocess_audio(audio)
-                    # X = np.load('../data/output/05_Rock3-117-Bb_solo_hex_cln_data_0nr.npz')['arr_0']
                     X = p.output['windows']
 
                     # Store preprocessed data
                     st.session_state['X'] = X
-
-                    # DEBUG: SAVING PREPRO OUTPUT
-                    np.save('../data/output/FRONTEND_X.npy', st.session_state['X'], allow_pickle=True, fix_imports=True)
 
                     #-----------Prediction Test-----------
                     swizzle_model = keras.models.load_model("../app/model/swizzle_model_1song_of_0nr", compile=False)
@@ -111,13 +105,6 @@ if st.session_state.page == 0:
                     postpro = PostProcessor()
                     post_pro_output = postpro.postprocess_data(y_pred)
                     st.session_state['tabs'] = post_pro_output
-
-                    # DEBUG: SAVING POSTPROCESSING
-                    np.save('../data/output/POSTPRO_FRONTEND.npy', st.session_state['tabs'], allow_pickle=True, fix_imports=True)
-                
-                
-                # np.set_printoptions(threshold=np.inf)
-                # st.write(st.session_state['y_pred'])
 
                 #-----------Guitar Tabs button-----------
                 st.write('')
