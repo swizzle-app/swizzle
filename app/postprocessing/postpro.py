@@ -90,7 +90,7 @@ class PostProcessor:
                         # extract empty string midi value
                         esmv = STANDARDE[sidx]
                         # check if note is new
-                        if esmv + fret_idx - 1 != midi_curr:
+                        if esmv + fret_idx[0] - 1 != midi_curr:
                             # allow for position to count up
                             next_pos = True
                             # append frame if new note found
@@ -100,7 +100,7 @@ class PostProcessor:
                                 for j in i:
                                     r.append([pos, sidx, np.squeeze(j)-1])
                             # set midi_curr new note
-                            midi_curr = esmv + fret_idx - 1
+                            midi_curr = esmv + fret_idx[0] - 1
                         # just do nothing if note is already known
                         else:
                             next_pos = False
