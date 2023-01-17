@@ -8,6 +8,7 @@ import plotly.express as px
 import numpy as np
 #import os
 import math
+import librosa
 import time
 #import plotly.graph_objects as go
 from tensorflow import keras  
@@ -21,10 +22,20 @@ from preprocessing.prepro import PreProcessor
 from postprocessing.postpro import PostProcessor
 
 # ----------Setup state session in streamlit----------
-if "page" not in st.session_state:
+if "page" not in st.session_state: st.session_state.page = 0
+if "audiofile" not in st.session_state: st.session_state.audiofile = None
+if "X" not in st.session_state: st.session_state.X = None
+if "y_pred" not in st.session_state: st.session_state.y_pred = None
+if "tabs" not in st.session_state: st.session_state.tabs = None
+
+
+# ---------- Pagestatus check functions ----------
+def nextpage(): 
+    st.session_state.page += 1
+
+def restart(): 
     st.session_state.page = 0
-def nextpage(): st.session_state.page += 1
-def restart(): st.session_state.page = 0
+
 placeholder = st.empty()
 
 # -----------------------------Page 1 (Home)-------------------------------
@@ -61,7 +72,7 @@ if st.session_state.page == 0:
             audio_file = st.file_uploader(label=" ", type=[".wav"]) #, ".wave", ".flac", ".mp3", ".ogg"])
             
             # -----Store variable with state session------
-            st.session_state['audio_file'] = audio_file
+            st.session_state['audiofile'] = audio_file
             
             #-----Swizzle Button------
             st.write('')
@@ -74,29 +85,40 @@ if st.session_state.page == 0:
                 
                     #-----------Pre-Processing -----------
                     p = PreProcessor()
-                    f = Funnel(p)
-                    X = f.process_data(audio_file)
+                    # f = Funnel(p)
+                    # X = f.process_data(st.session_state['audiofile'])
+                    audio, _ = librosa.load(audio_file, sr=22050, dtype=np.float32, mono=True)
+                    p.preprocess_audio(audio)
+                    # X = np.load('../data/output/05_Rock3-117-Bb_solo_hex_cln_data_0nr.npz')['arr_0']
+                    X = p.output['windows']
 
-                    st.session_state['pre_output'] = X
+                    # Store preprocessed data
+                    st.session_state['X'] = X
+
+                    # DEBUG: SAVING PREPRO OUTPUT
+                    np.save('../data/output/FRONTEND_X.npy', st.session_state['X'], allow_pickle=True, fix_imports=True)
 
                     #-----------Prediction Test-----------
-                    swizzle_model = keras.models.load_model("../app/model/swizzle_model_v3", compile=False)
-                    y = swizzle_model.predict(X)
-                    st.session_state['y'] = y
-
+                    swizzle_model = keras.models.load_model("../app/model/swizzle_model_1song_of_0nr", compile=False)
                     
+                    y_pred = swizzle_model.predict(st.session_state['X'])
+                    st.session_state['y_pred'] = y_pred
+
+                    # DEBUG: SAVING PREDICTIONS
+                    np.save('../data/output/CNN_PRED_FRONTEND.npy', st.session_state['y_pred'], allow_pickle=True, fix_imports=True)
 
                     #-----------Post-Processing-----------
                     postpro = PostProcessor()
-                    post_pro_output = postpro.postprocess_data(y)
-                    
-                    # -----Store variable with state session------
-                    st.session_state['post_pro_output'] = post_pro_output
-                
-                #np.set_printoptions(threshold=np.inf)
-                #st.write(np.round(st.session_state.y,2))
+                    post_pro_output = postpro.postprocess_data(y_pred)
+                    st.session_state['tabs'] = post_pro_output
+
+                    # DEBUG: SAVING POSTPROCESSING
+                    np.save('../data/output/POSTPRO_FRONTEND.npy', st.session_state['tabs'], allow_pickle=True, fix_imports=True)
                 
                 
+                # np.set_printoptions(threshold=np.inf)
+                # st.write(st.session_state['y_pred'])
+
                 #-----------Guitar Tabs button-----------
                 st.write('')
                 st.write('### Enjoy your guitar tabs!')
@@ -131,8 +153,8 @@ elif st.session_state.page == 1:
         st.image('media/swizzle_logo.png', width=400)
         st.markdown("---")
         left_column, right_column = st.columns(2)
-        audio_file = st.session_state['audio_file']
-        post_pro_output = st.session_state['post_pro_output']
+        audio_file = st.session_state['audiofile']
+        post_pro_output = st.session_state['tabs']
         
         #print(st.session_state.pre_output)
         #print(st.session_state.y)

@@ -112,7 +112,7 @@ class Funnel:
                 audio, labels = self.p.load_files(f, rec_mode=rm)
 
                 # Preprocess audio and labels
-                self.p.preprocess_audio(audio)
+                self.p.preprocess_audio(audio, training=True)
                 self.p.preprocess_labels(labels)
 
                 # remove empty frames
@@ -154,10 +154,10 @@ class Funnel:
         self.logger.info(f"Processing data.")
 
         # load data into librosa object
-        data, _ = librosa.load(data, sr=None)
+        data, _ = librosa.load(data, sr=None, mono=True)
 
         # preprocess data
-        self.p.preprocess_audio(data, training=False)
+        self.p.preprocess_audio(data=data, training=True)
 
         self.logger.info(f"Success!")
 

@@ -136,7 +136,7 @@ class PreProcessor:
         self.curr_rm = rm
 
         # extract audio
-        audio, _ = librosa.load(audiofile, sr=self.sr, dtype=np.float32)
+        audio, _ = librosa.load(audiofile, sr=self.sr, dtype=np.float32, mono=True)
 
         # save audio length
         self.audiolength = librosa.get_duration(y=audio, sr=self.sr, hop_length=self.hop_length)
@@ -228,7 +228,8 @@ class PreProcessor:
         """
 
         # initialize windows array
-        windows = np.zeros(shape=(data.shape[0], self.bins, self.winwidth))
+        # windows = np.zeros(shape=(data.shape[0], self.winwidth, self.bins)) # Landscape
+        windows = np.zeros(shape=(data.shape[0], self.bins, self.winwidth)) # Portrait
 
         if training:
 
@@ -350,10 +351,14 @@ class PreProcessor:
         windows = []
 
         for w in range(n_windows):
+
+            # calculate left and right timebounds for current window
             lbound = ((w-half_width) / n_windows * self.audiolength)
             rbound = ((w+half_width) / n_windows * self.audiolength)
 
             self.logger.debug(f"Current timeframe: {np.round(lbound, 3):.3f} - {np.round(rbound, 3):.3f} / {np.round(self.audiolength, 3):.3f}")
+
+            # mask labels based on time column (index: 2)
             mask = ((labels[:, 2] >= lbound) & (labels[:, 2] <= rbound))
             windows.append(labels[mask, :-1])
             self.logger.debug(f"Found labels: {labels[mask, :-1]}")
@@ -422,13 +427,13 @@ class PreProcessor:
 
         # save files if data is present
         if 'windows' in self.output:
-            np.savez(path + self.curr_file + self.curr_rm + "_" + suffix[0] + ".npz", self.output.get('windows'))
+            np.savez(path + self.curr_file + self.curr_rm + "_" + suffix[0] + "_0nr.npz", self.output.get('windows'))
             self.logger.info(f'Data was saved under {path + self.curr_file + self.curr_rm + "_" + suffix[0] + ".npz"}')
         else:
             self.logger.warning('No data to save!')
 
         if 'windowlabels' in self.output:
-            np.savez(path + self.curr_file + self.curr_rm + "_" + suffix[1] + ".npz", self.output.get('windowlabels'))
+            np.savez(path + self.curr_file + self.curr_rm + "_" + suffix[1] + "_0nr.npz", self.output.get('windowlabels'))
             self.logger.info(f'Labels were saved under {path + self.curr_file + self.curr_rm + "_" + suffix[1] + ".npz"}')
         else:
             self.logger.warning('No labels to save!')
@@ -472,14 +477,14 @@ def main(verbose: int = 3):
     files = [f for f in files if 'solo' in f]
     
     # get audio and label file for first filename
-    audio, labels = p.load_files("03_BN1-129-Eb_solo.jams", rec_mode='pd')
+    audio, labels = p.load_files("05_Rock3-117-Bb_solo.jams", rec_mode='pd')
 
     # Preprocess audio and labels
     p.preprocess_audio(data=audio, training=True)
     p.preprocess_labels(labels)
 
     # remove noise
-    p.remove_noise(fraction = 0.90)
+    # p.remove_noise(fraction = 0.90)
 
     # save output
     p.save_output()
