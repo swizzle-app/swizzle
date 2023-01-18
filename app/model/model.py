@@ -84,9 +84,9 @@ class SwizzleModel:
         return IMAGES, annots
 
 
-    def data_split(self, IMAGES, annots, file_name: str):
+    def data_split(self, images, annots, file_name: str):
 
-        self.IMAGES = IMAGES
+        self.IMAGES = images
         self.annots = annots
 
         """
@@ -98,7 +98,7 @@ class SwizzleModel:
 
         '"""
         self.train_images, self.test_images, self.train_annots, self.test_annots = train_test_split(
-            IMAGES['arr_0'], annots['arr_0'], test_size= 0.3, random_state= RSEED )
+            images['arr_0'], annots['arr_0'], test_size= 0.3, random_state= RSEED )
         self.train_images, self.validate_images,self.train_annots,self.validate_annots = train_test_split(
             self.train_images,self.train_annots, test_size = 0.1,random_state = RSEED)
 
