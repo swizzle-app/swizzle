@@ -133,11 +133,6 @@ elif st.session_state.page == 1:
             st.subheader('About')
             st.markdown('Swizzle is a tool for musicians providing **AI generated music notation of songs**.')
             st.markdown("You can find the code on our [Github](https://github.com/swizzle-app/swizzle)")
-
-        # ----------Create an dummy array for testing 6x21----------
-        # new = pd.DataFrame({'pos': [1, 2, 3, 4,5,6,7,8,9, 10, 11, 12,13,14,15,16,17,18,19,20,21,22,23,24],
-        #             'string': ['E','A','D','G','B','e','B','G','E','A','D','G','B','e','B','G','B','e','B','G','B','B','G','B'],
-        #             'fret': [1,2,3,4,5,6,5,4,1,2,3,4,5,6,5,4,5,6,5,4,2,5,4,2]})
         
         # -----Page layout and setup session state------
         st.image('media/swizzle_logo.png', width=400)
@@ -145,13 +140,6 @@ elif st.session_state.page == 1:
         left_column, right_column = st.columns(2)
         audio_file = st.session_state['audiofile']
         post_pro_output = st.session_state['tabs']
-        
-        #print(st.session_state.pre_output)
-        #print(st.session_state.y)
-        #print(post_pro_output)
-
-
-
 
         with left_column:
             
@@ -169,7 +157,6 @@ elif st.session_state.page == 1:
         j = math.ceil(j)
         u_bound=10
         l_bound=0
-        #tab=post_pro_output[l_bound:u_bound]
         df=pd.DataFrame(post_pro_output, columns=["pos", "string", "fret"])
 
         # -----Page layout and session state------
@@ -177,27 +164,21 @@ elif st.session_state.page == 1:
         left_column, center_column,right_column = st.columns(3)
         with left_column:
             st.write('### Guitar tabs')
-        #with right_column:
-            #st.button("Home",on_click=restart)
         
         # ----------Show guitar tabs using plotly express scatter plot----------
         for i in range(j):    
             tab = df[l_bound:u_bound]
             
-            #fig = px.scatter(tab,y=1, x=0,text=2,width=800, height=600,
-            #labels={1: "",0: ""}) #category_orders={1: ["e", "B", "G", "D", "A","E"]}
-            
             fig = px.scatter(tab,y="string", x="pos",text='fret',width=800, height=350,
-            labels={"string": "","pos": ""}) #, category_orders={"string": ["e", "B", "G", "D", "A","E"]
+            labels={"string": "","pos": ""})
             
             # -----Scatter Plot settings------
-            fig.update_traces(marker_size=20)#, color='white')
+            fig.update_traces(marker_size=20)
             fig.update_traces(textposition="middle center")
             fig.update_traces(marker=dict(color='White'))
-            fig.update_yaxes(gridcolor='black',showgrid=True)#, griddash='dash'
+            fig.update_yaxes(gridcolor='black',showgrid=True)
             fig.update_xaxes(gridcolor='white',showgrid=True,showticklabels=True)
             fig.update_layout(font=dict(family="Courier New, monospace",size=18,color="Black"))
-            #These include "Arial", "Balto", "Courier New", "Droid Sans",, "Droid Serif", "Droid Sans Mono", "Gravitas One", "Old Standard TT", "Open Sans", "Overpass", "PT Sans Narrow", "Raleway", "Times New Roman".
             fig.update_layout(xaxis = dict(tickfont = dict(size=20,color="black")))
             fig.update_layout(yaxis = dict(tickfont = dict(size=20,color="black"), tickvals= [0,1,2,3,4,5],ticktext=["E","A","D","G","B","e"]))
             fig.add_hline(y=0,line_width=1)
@@ -206,7 +187,6 @@ elif st.session_state.page == 1:
             fig.add_hline(y=3,line_width=1)
             fig.add_hline(y=4,line_width=1)
             fig.add_hline(y=5,line_width=1)
-            #fig.add_vline(x=0,line_width=1)
 
             fig.update_layout(font_family="Arial", showlegend=True)
             fig.update_yaxes(col=1,range=[-1,6+1])
