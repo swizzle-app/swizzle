@@ -1,32 +1,39 @@
-# SWIZZLE - AI GENERATED MUSIC NOTATION FOR SONGS
+                         ###################
+                        #                  #
+ #######               #  #  #####  #####  #   ###
+#       #      #      #   #     #      #   #  #   #
+ ###     #    # #    #    #    #      #    #  ####
+    #     #  #   #  #     #   #      #     #  #
+####       ##     ##      #  #####  #####  #   ###
 
 
-# ----------import python packages----------
+#############################################
+#                   IMPORTS                 #
+#############################################
+
+
+# ---------- python packages ----------
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 import numpy as np
-#import os
 import math
 import librosa
-import time
-#import plotly.graph_objects as go
 from tensorflow import keras  
 
-# ----------Page layout----------
-st.set_page_config(layout = "wide")
-
-# ----------import user packages----------
-from preprocessing.funnel import Funnel
+# ---------- swizzle packages ----------
 from preprocessing.prepro import PreProcessor
 from postprocessing.postpro import PostProcessor
 
+# ---------- Page layout ----------
+st.set_page_config(layout="wide")
+
 # ----------Setup state session in streamlit----------
-if "page" not in st.session_state: st.session_state.page = 0
-if "audiofile" not in st.session_state: st.session_state.audiofile = None
-if "X" not in st.session_state: st.session_state.X = None
-if "y_pred" not in st.session_state: st.session_state.y_pred = None
-if "tabs" not in st.session_state: st.session_state.tabs = None
+if "page" not in st.session_state: st.session_state['page'] = 0
+if "audiofile" not in st.session_state: st.session_state['audiofile'] = None
+if "X" not in st.session_state: st.session_state['X'] = None
+if "y_pred" not in st.session_state: st.session_state['y_pred'] = None
+if "tabs" not in st.session_state: st.session_state['tabs'] = None
 
 
 # ---------- Pagestatus check functions ----------
@@ -38,7 +45,7 @@ def restart():
 
 placeholder = st.empty()
 
-# -----------------------------Page 1 (Home)-------------------------------
+# ----------------------------- Page 1 (Home) -------------------------------
 if st.session_state.page == 0:
     # Replace the content of page with several elements:
     with placeholder.container():
@@ -59,15 +66,16 @@ if st.session_state.page == 0:
             st.markdown('Swizzle is a tool for musicians providing **AI generated music notation of songs**.')
             st.markdown("You can find the code on our [Github](https://github.com/swizzle-app/swizzle)")
         
-        # -----Swizzle Logo------
-        st.image('media/swizzle_logo.png', width=400,)
+        # ----- Swizzle Logo ------
+        st.image('media/swizzle_logo.png', width=450)
         st.markdown("---")
         
+        # ----- Page layout - create 2 columns ------
         left_column, right_column = st.columns(2)
-         # -----Page layout - create 2 columns------
+
         with left_column:
-            
-            # -----Upload  WAV file------
+
+            # ----- Upload  WAV file ------
             st.write('### Upload your WAV file')  
             audio_file = st.file_uploader(label=" ", type=[".wav"]) #, ".wave", ".flac", ".mp3", ".ogg"])
             
@@ -78,6 +86,7 @@ if st.session_state.page == 0:
             st.write('')
             st.write('### Do the magic...') 
             st.write('') 
+
             if st.button("Swizzle it",):
                 
                 #-----Swizzle Spinner------
@@ -93,18 +102,17 @@ if st.session_state.page == 0:
                     st.session_state['X'] = X
 
                     #-----------Prediction Test-----------
-                    swizzle_model = keras.models.load_model("../app/model/swizzle_model_1song_of_0nr", compile=False)
+                    swizzle_model = keras.models.load_model("../app/model/swizzle_model_solo_pd_0nr_50", compile=False)
                     
                     y_pred = swizzle_model.predict(st.session_state['X'])
                     st.session_state['y_pred'] = y_pred
-
-                    # DEBUG: SAVING PREDICTIONS
-                    np.save('../data/output/CNN_PRED_FRONTEND.npy', st.session_state['y_pred'], allow_pickle=True, fix_imports=True)
 
                     #-----------Post-Processing-----------
                     postpro = PostProcessor()
                     post_pro_output = postpro.postprocess_data(y_pred)
                     st.session_state['tabs'] = post_pro_output
+
+                    nextpage()
 
                 #-----------Guitar Tabs button-----------
                 st.write('')

@@ -86,10 +86,10 @@ if __name__ == "__main__":
     verbose = 4         # 0-4: verbosity of the function.
     r = False           # True, False: return values to variable.
     save = True         # True, False: save values to files.
-    rec_modes = ['all'] # ['mm', 'mp', 'pd', 'po']: recording modes to consider. Has to be a list.
+    rec_modes = ['pd']  # ['mm', 'mp', 'pd', 'po']: recording modes to consider. Has to be a list.
     subset = 1          # 0-1: fraction of data to sample
     filter = 'solo'     # solo, comp, empty: song modes to consider. Empty string means take all.
-    remove_noise = 0.90 # 0-1: fraction of empty frames to remove.
+    remove_noise = 0    # 0-1: fraction of empty frames to remove.
 
 
     ############### FUNCTION CALL #####################
