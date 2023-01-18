@@ -29,7 +29,6 @@ STANDARDE = [40, 45, 50, 55, 59, 64]
 class PostProcessor:
 
     def __init__(self, verbose: int = 3):
-
         # setup logger
         FORMAT = "[%(levelname)8s][%(filename)s:%(lineno)4s - %(funcName)20s() ] %(message)s"
         logging.basicConfig(format=FORMAT)
@@ -38,7 +37,7 @@ class PostProcessor:
         self.logger.setLevel(verbosity[verbose])
 
     
-    def postprocess_data(self, y: np.array, test: np.array = np.zeros((0))) -> np.array:
+    def postprocess_data(self, y: np.array, remove_duplicates: bool = True, test: np.array = np.zeros((0))) -> np.array:
         """Processes predictions from swizzle. Returns list with position, string, fret.
 
         Args:
@@ -67,48 +66,78 @@ class PostProcessor:
             for fidx, frame in enumerate(y):
                 for sidx, string in enumerate(frame):
                     y_corr[fidx][sidx][np.argmax(string)] = 1
+            
+            self.logger.info("Mapped probabilities to [0, 1] using argmax.")
 
-            # input: n x (6, 21)
-            # convert frame to midi note (string_base_note + fret)
-            # store midi note and frame index in midi_curr, idx_curr
-            # continue until new midi note: midi_new, idx_new
-            # get index of last seen midi_curr
-            # remove positions idx_curr+1 to idx_new
+            if remove_duplicates:
+                self.logger.info(f"Remove duplicates is {remove_duplicates}.")
+                # input: n x (6, 21)
+                # convert frame to midi note (string_base_note + fret)
+                # store midi note and frame index in midi_curr, idx_curr
+                # continue until new midi note: midi_new, idx_new
+                # get index of last seen midi_curr
+                # remove positions idx_curr+1 to idx_new
 
-            midi_curr = 0
+                midi_curr = 0
 
-            # loop over every frame
-            for fidx, frame in enumerate(y_corr):
-                self.logger.info(f"Processing frame {fidx+1}/{y.shape[0]}.")
-               # loop over every string
-                for sidx, string in enumerate(frame):
-                    # extract fret indices
-                    fret_idx = np.where(string == 1)
-                    self.logger.debug(f"Fret indices for string {sidx} at position {pos}: {fret_idx}")
-                    # reshape data to output shape
-                    if np.sum(fret_idx) > 0:
-                        # extract empty string midi value
-                        esmv = STANDARDE[sidx]
-                        # check if note is new
-                        if esmv + fret_idx[0] - 1 != midi_curr:
-                            # allow for position to count up
+                # loop over every frame
+                for fidx, frame in enumerate(y_corr):
+                    self.logger.info(f"Processing frame {fidx+1}/{y.shape[0]}.")
+                # loop over every string
+                    for sidx, string in enumerate(frame):
+                        # extract fret indices
+                        fret_idx = np.where(string == 1)
+                        self.logger.debug(f"Fret indices for string {sidx} at position {pos}: {fret_idx}")
+                        # reshape data to output shape
+                        if np.sum(fret_idx) > 0:
+                            # extract empty string midi value
+                            esmv = STANDARDE[sidx]
+                            # check if note is new
+                            if esmv + fret_idx[0] - 1 != midi_curr:
+                                # allow for position to count up
+                                next_pos = True
+                                # append frame if new note found
+                                for i in fret_idx:
+                                    # safety loop if multiple elements per string
+                                    # this shouldn't happen, but who knows
+                                    for j in i:
+                                        r.append([pos, sidx, np.squeeze(j)-1])
+                                # set midi_curr new note
+                                midi_curr = esmv + fret_idx[0] - 1
+                            # just do nothing if note is already known
+                            else:
+                                next_pos = False
+                    
+                    # next position
+                    if next_pos: 
+                        pos += 1
+                        next_pos = False
+                
+            else:
+                self.logger.info(f"Remove duplicates is {remove_duplicates}.")
+                # loop over every frame
+                for fidx, frame in enumerate(y_corr):
+                    self.logger.info(f"Processing frame {fidx+1}/{y.shape[0]}.")
+                    # loop over every string
+                    for sidx, string in enumerate(frame):
+                        # extract fret indices
+                        fret_idx = np.where(string == 1)
+                        self.logger.debug(f"Fret indices for string {sidx} at position {pos}: {fret_idx}")
+                        # reshape data to output shape
+                        if np.sum(fret_idx) > 0:
                             next_pos = True
-                            # append frame if new note found
                             for i in fret_idx:
                                 # safety loop if multiple elements per string
                                 # this shouldn't happen, but who knows
                                 for j in i:
                                     r.append([pos, sidx, np.squeeze(j)-1])
-                            # set midi_curr new note
-                            midi_curr = esmv + fret_idx[0] - 1
-                        # just do nothing if note is already known
                         else:
                             next_pos = False
-                
-                # next position
-                if next_pos: 
-                    pos += 1
-                    next_pos = False
+                    
+                    # next position
+                    if next_pos: 
+                        pos += 1
+                        next_pos = False
 
             self.logger.info("Done.")
 
