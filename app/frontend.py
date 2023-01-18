@@ -39,6 +39,7 @@ if "tabs" not in st.session_state: st.session_state['tabs'] = None
 # ---------- Pagestatus check functions ----------
 def nextpage(): 
     st.session_state.page += 1
+    st.experimental_rerun()
 
 def restart(): 
     st.session_state.page = 0
@@ -82,17 +83,17 @@ if st.session_state.page == 0:
             # -----Store variable with state session------
             st.session_state['audiofile'] = audio_file
             
-            #-----Swizzle Button------
+            #----- Swizzle Button ------
             st.write('')
             st.write('### Do the magic...') 
             st.write('') 
 
             if st.button("Swizzle it",):
                 
-                #-----Swizzle Spinner------
+                #----- Swizzle Spinner ------
                 with st.spinner('Swizzle it...'):
                 
-                    #-----------Pre-Processing -----------
+                    #----------- Pre-Processing -----------
                     p = PreProcessor()
                     audio, _ = librosa.load(audio_file, sr=22050, dtype=np.float32, mono=True)
                     p.preprocess_audio(audio)
@@ -101,24 +102,19 @@ if st.session_state.page == 0:
                     # Store preprocessed data
                     st.session_state['X'] = X
 
-                    #-----------Prediction Test-----------
-                    swizzle_model = keras.models.load_model("../app/model/swizzle_model_solo_pd_0nr_50", compile=False)
+                    #----------- Loading the model -----------
+                    swizzle_model = keras.models.load_model("../app/model/swizzle_model", compile=False)
                     
                     y_pred = swizzle_model.predict(st.session_state['X'])
                     st.session_state['y_pred'] = y_pred
 
-                    #-----------Post-Processing-----------
+                    #----------- Post-Processing -----------
                     postpro = PostProcessor()
                     post_pro_output = postpro.postprocess_data(y_pred)
                     st.session_state['tabs'] = post_pro_output
 
-                    nextpage()
-
-                #-----------Guitar Tabs button-----------
-                st.write('')
-                st.write('### Enjoy your guitar tabs!')
-                st.write('')
-                st.button("Get guitar tabs",on_click=nextpage,disabled=(st.session_state.page > 3))
+                #----------- get guitar tabs -----------
+                nextpage()
                      
 # -----------------------------Page 2 (Guitar tabs)-------------------------------     
 elif st.session_state.page == 1:
@@ -126,8 +122,7 @@ elif st.session_state.page == 1:
     
         # -----Create Sidebar------
         with st.sidebar:
-            st.button("Go back home",on_click=restart)
-            st.write("")
+            st.button("← go back home",on_click=restart)
             st.write("")
             st.write("")
             st.write("")
