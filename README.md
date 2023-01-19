@@ -1,5 +1,5 @@
 <p align=center>
-    <a href="www.google.com" target="_blank"><img src="media/logo.png" alt="swizzle-logo"></a>
+    <a href="www.google.com" target="_blank"><img src="../app/media/swizzle_logo_dark.png" alt="swizzle-logo"></a>
 </p>
 
 ---
