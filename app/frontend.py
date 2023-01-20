@@ -26,7 +26,10 @@ from preprocessing.prepro import PreProcessor
 from postprocessing.postpro import PostProcessor
 
 # ---------- Page layout ----------
-st.set_page_config(layout='wide', page_title='swizzle', initial_sidebar_state='expanded', menu_items={'About': '\"swizzle\" is a tool for musicians providing **AI generated music notation of songs**.\n \n Created with :heart: by Flo, Ivy, Matthias, and Sebastian.\n \n Check our GitHub [here](https://github.com/swizzle-app/swizzle)!'})
+st.set_page_config(layout='wide',
+                   page_title='swizzle',
+                   initial_sidebar_state='expanded',
+                   menu_items={'About': '\"swizzle\" is a tool for musicians providing **AI generated music notation of songs**.\n \n Created with :heart: by Flo, Ivy, Matthias, and Sebastian.\n \n Check our GitHub [here](https://github.com/swizzle-app/swizzle)!'})
 
 
 # ----------Setup state session in streamlit----------
@@ -98,7 +101,7 @@ if st.session_state.page == 0:
 
                 else:
                     #----- Swizzle Spinner ------
-                    with st.spinner('🤖 swizzling it...'):
+                    with st.spinner('🔮 swizzling it...'):
                     
                         #----------- Pre-Processing -----------
                         p = PreProcessor()
@@ -111,7 +114,6 @@ if st.session_state.page == 0:
 
                         #----------- Loading the model -----------
                         swizzle_model = keras.models.load_model("../app/model/swizzle_model", compile=False)
-                        
                         y_pred = swizzle_model.predict(st.session_state['X'])
                         st.session_state['y_pred'] = y_pred
 
@@ -160,6 +162,7 @@ elif st.session_state.page == 1:
             st.write('### Guitar tabs')
         
         # ----------Show guitar tabs using plotly express scatter plot----------
+
             for i in range(n_tabs):    
                 # get next 10 notes
                 tab = df[l_bound:u_bound].reset_index(drop=True)
