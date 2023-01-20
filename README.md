@@ -23,7 +23,7 @@
 <a id="intro"></a>
 
 # Intro
-Guitar players know it all too well: you have this idea you want to share with others, but in order for them also being able to play it, you need to transcribe it.
+:information_source: Guitar players know it all too well: you have this idea you want to share with others, but in order for them also being able to play it, you need to transcribe it.
 
 This not only takes time, but it can also kill the creative process.
 
