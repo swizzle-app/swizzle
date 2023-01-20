@@ -49,25 +49,38 @@ Here is how it actually works:
 
 There are two ways to use our app.
 
-1. Simply visit our web-app [here](www.google.com)
-1. Or clone our repo and set it up on your machine (Note: you will need git for this. You can download it [here](https://www.git-scm.com))
+## Simply visit our web-app
+We deployed our web-app and you can find it [here](www.google.com)!
+
+## Clone our repo and set it up on your machine
+
+:information_source: Note: you will need git for this. You can download it <a href="https://www.git-scm.com">here</a>
+
+1. **Clone repo and install dependencies in a local environment**: Just run these commands in your terminal.
+
 
         # clone this repository
-        $ git clone https://github.com/swizzle-app/swizzle
+        git clone https://github.com/swizzle-app/swizzle
 
         # go into repository
-        $ cd swizzle
+        cd swizzle
 
-        # create local environment
-        $ pyenv local 3.9.8
-        $ python -m venv .venv
+        # setup virtual environment
+        # and install dependencies
+        make setup
 
         # activate local environment
-        $ source .venv/bin/activate
+        source .venv/bin/activate
 
-        # install dependencies
-        $ make setup
-    Finally, you will need to download the dataset (if you want to use it) and extract it in the repository under "data/raw/". The dataset can be downloaded [here](https://guitarset.weebly.com).
+2. **Download the dataset**: download the dataset (if you want to use it, e.g. for training) and extract it in the repository under "data/raw/". The dataset can be downloaded [here](https://guitarset.weebly.com).
+
+3. **Run the app**: simply navigate to the "app" folder in your terminal and run the command:
+
+        streamlit run frontend.py
+
+    a browser window will open, running the app.
+
+4. **Have fun!**
 
     
 <a id="ref"></a>
