@@ -1,5 +1,5 @@
 <p align=center>
-    <a href="www.google.com" target="_blank"><img src="app/media/swizzle_logo_light.png" alt="swizzle-logo"></a>
+    <a href="https://does-not-compile-swizzle-appfrontend-st1t50.streamlit.app" target="_blank"><img src="app/media/swizzle_logo_light.png" alt="swizzle-logo"></a>
 </p>
 
 ---
@@ -50,7 +50,7 @@ Here is how it actually works:
 There are two ways to use our app.
 
 ## Simply visit our web-app
-We deployed our web-app and you can find it [here](www.google.com)!
+We deployed our web-app and you can find it [here](https://does-not-compile-swizzle-appfrontend-st1t50.streamlit.app)!
 
 ## Clone our repo and set it up on your machine
 
