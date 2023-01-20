@@ -35,7 +35,7 @@ This not only takes time, but it can also kill the creative process.
 
 <a id="bts"></a>
 
-# Behind the scenes
+# Workflow of swizzle
 Here is how it actually works:
 
 1. **Upload audio**: After uploading an audio file (a guitar recording), it is transformed into a numeric representation (constant-Q transformation) that can be thought of as an image (i.e. a spectrogram).
@@ -45,7 +45,7 @@ Here is how it actually works:
 
 <a id="use"></a>
 
-# How to use
+# How to use swizzle
 
 There are two ways to use our app.
 
