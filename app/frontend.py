@@ -39,7 +39,6 @@ if "X" not in st.session_state: st.session_state['X'] = None
 if "y_pred" not in st.session_state: st.session_state['y_pred'] = None
 if "tabs" not in st.session_state: st.session_state['tabs'] = None
 
-
 # ---------- Pagestatus check functions ----------
 def nextpage(): 
     st.session_state.page += 1

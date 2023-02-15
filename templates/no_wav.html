@@ -1,0 +1,156 @@
+<!DOCTYPE html5>
+<html>
+<!--     
+                         ###################
+                        #                  #
+ #######               #  #  #####  #####  #   ###
+#       #      #      #   #     #      #   #  #   #
+ ###     #    # #    #    #    #      #    #  ####
+    #     #  #   #  #     #   #      #     #  #
+####       ##     ##      #  #####  #####  #   ###
+ -->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+        <!-- <link rel="stylesheet" href="../static/img/fav/fav.png" type="image/png"> -->
+        <link rel="icon" href="{{ url_for('static', filename='/img/fav/fav.png') }}" type="image/png">
+        <!-- <link rel="stylesheet" href="../static/css/index.css"> -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='/css/index.css') }}" >
+        <title>swizzle</title>
+    </head>
+    <body>
+        <noscript>You need to enable JavaScript to run this app.</noscript>
+        <div class="nav" id="nav">
+            <div class="nav-burger" id="nav-burger">
+                <div class="burger-top" id="burger-top"></div>
+                <div class="burger-mid" id="burger-mid"></div>
+                <div class="burger-bottom" id="burger-bottom"></div>
+            </div>
+            <ul class="nav-content panel" id="nav-content">
+                <li>
+                    <div class="header">About</div>
+                    <div class="hr"></div>
+                </li>
+                <li>
+                    <div class="text">
+                        <p>
+                            "swizzle" is a tool for musicians providing<br><b>AI generated music notation of songs</b>.
+                        </p>
+                        <p>
+                            You can find the code on our <a href="https://www.github.com/swizzle-app/swizzle" target="_blank">Github</a>
+                        </p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="col a-center" id="content">
+            <div class="logo">
+                <?xml version="1.0" encoding="utf-8"?>
+                <svg class="svgLogo" version="1.1" id="svgLogo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                    viewBox="0 0 1920 500" style="enable-background:new 0 0 1920 500;" xml:space="preserve">
+                    <style type="text/css">
+                        .linesLogo{fill:none;stroke:#7900AA;stroke-width:2.7998;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+                        .waveLogo{fill:none;stroke:#7900AA;stroke-width:2.8402;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+                        .textLogo{fill:#000000;}
+                    </style>
+                    <g id="linesLogo">
+                        <line class="linesLogo" x1="894.8" y1="107.4" x2="1553.8" y2="107.4"/>
+                        <line class="linesLogo" x1="895" y1="94.7" x2="1553.6" y2="94.7"/>
+                        <line class="linesLogo" x1="895.1" y1="82" x2="1553.5" y2="82"/>
+                        <line class="linesLogo" x1="895.3" y1="69.3" x2="1553.3" y2="69.3"/>
+                        <line class="linesLogo" x1="895.4" y1="56.6" x2="1553.2" y2="56.6"/>
+                        <line class="linesLogo" x1="895.5" y1="43.9" x2="1553.1" y2="43.9"/>
+                    </g>
+                    <g id="waveLogo">
+                        <path class="waveLogo" d="M159.2,199.6c72.4,22.7,117.7,163.3,167.6,163.3c92.3,0,80.1-237.2,177.5-237.2c97.4,0,96.9,237.2,194.3,237.2
+                            S796.1,49.7,894.1,44.1"/>
+                        <path class="waveLogo" d="M161.2,194.3c78.9,27.6,115.3,178.6,164.5,181.4c90.3,4.7,81.1-265.6,178.5-265.6
+                            c97.4,0,96.9,265.6,194.3,265.6S796.3,58.6,894.3,53.1"/>
+                        <path class="waveLogo" d="M163.3,189c85.4,32.5,112.8,194.1,161.5,199.4c88.2,9.6,82.1-294,179.5-294c97.4,0,97,294,194.4,294
+                            s97.8-321,195.8-326.3"/>
+                        <path class="waveLogo" d="M165.3,183.7c91.9,37.3,110.3,209.5,158.4,217.5c86.2,14.3,83.2-322.4,180.6-322.4
+                            c97.4,0,97,322.4,194.4,322.4s98-324.9,196-330"/>
+                        <path class="waveLogo" d="M167.3,178.5c98.4,42.2,107.8,224.8,155.4,235.5c84.1,19,84.2-350.8,181.6-350.8
+                            c97.4,0,97.1,350.8,194.5,350.8S796.9,85.1,894.9,80.3"/>
+                        <path class="waveLogo" d="M169.4,173.2c104.9,47.1,105.4,240.1,152.4,253.6c82.1,23.6,85.2-379.2,182.6-379.2
+                            c97.4,0,97.1,379.2,194.5,379.2S797.1,94,895.1,89.3"/>
+                        <path class="waveLogo" d="M171.4,167.9c111.4,51.9,102.9,255.3,149.3,271.6C400.8,467.7,406.9,32,504.3,32
+                            c97.4,0,97.1,407.6,194.5,407.6s98.5-336.7,196.5-341.2"/>
+                        <path class="waveLogo" d="M173.4,162.6c117.9,56.8,100.5,270.6,146.3,289.7c78.1,32.7,87.2-436,184.6-436c97.4,0,97.2,436,194.6,436
+                            s98.7-340.7,196.7-344.9"/>
+                    </g>
+                    <g id="textLogo">
+                        <path class="textLogo" d="M928.5,75.9c0.6,18.2-12.7,32.7-34,32.7c-18.8,0-32.1-14.6-32.1-32.7c0-18.8,13.9-33.4,33.4-33.4
+                            C915.8,42.6,928.5,57.1,928.5,75.9z M869.1,425.2V185.1c0-14.7,11.9-26.7,26.7-26.7h0c14.7,0,26.7,11.9,26.7,26.7v240.1
+                            c0,14.7-11.9,26.7-26.7,26.7h0C881,451.9,869.1,439.9,869.1,425.2z"/>
+                        <path class="textLogo" d="M977.6,428.2c0-4.7,1.5-9.2,4.4-12.9l128.4-167.1c12.7-15.8,24.9-29.7,38.2-45.5v-1.2H1011
+                            c-11.7,0-21.2-9.5-21.2-21.2v-0.6c0-11.7,9.5-21.2,21.2-21.2h180.9c11.9,0,21.4,9.7,21.2,21.6l-0.1,4.7c-0.1,4.5-1.6,8.9-4.4,12.5
+                            l-126.7,164.8c-12.1,16.4-24.3,30.9-37.6,46.1v1.2h150.4c11.7,0,21.2,9.5,21.2,21.2v0c0,11.7-9.5,21.2-21.2,21.2H998.9
+                            c-11.7,0-21.2-9.5-21.2-21.2V428.2z"/>
+                        <path class="textLogo" d="M1237.2,428.2c0-4.7,1.5-9.2,4.4-12.9L1370,248.1c12.7-15.8,24.9-29.7,38.2-45.5v-1.2h-137.7
+                            c-11.7,0-21.2-9.5-21.2-21.2v-0.6c0-11.7,9.5-21.2,21.2-21.2h180.9c11.9,0,21.4,9.7,21.2,21.6l-0.1,4.7c-0.1,4.5-1.6,8.9-4.4,12.5
+                            l-126.7,164.8c-12.1,16.4-24.3,30.9-37.6,46.1v1.2h150.4c11.7,0,21.2,9.5,21.2,21.2v0c0,11.7-9.5,21.2-21.2,21.2h-195.9
+                            c-11.7,0-21.2-9.5-21.2-21.2V428.2z"/>
+                        <path class="textLogo" d="M1556.7,21.3L1556.7,21.3c14.7,0,26.7,11.9,26.7,26.7v377.2c0,14.7-11.9,26.7-26.7,26.7l0,0
+                            c-14.7,0-26.7-11.9-26.7-26.7V48C1530,33.3,1542,21.3,1556.7,21.3z"/>
+                        <path class="textLogo" d="M1724.4,314.8c-12.3,0-21.5,11.1-19.4,23.2c9.8,55.4,51.3,78.7,98.5,78.7c26.5,0,45.7-3.2,61.6-8
+                            c10.8-3.3,22.2,3.3,24.8,14.3v0c2.4,10-3.3,20.1-13.1,23.3c-19.1,6.2-45.8,11.6-80.5,11.6c-90.4,0-144.3-59.4-144.3-148
+                            c0-88.5,52.2-158.3,137.7-158.3c95.8,0,121.3,84.3,121.3,138.3c0,2.1,0,4-0.1,5.9c-0.4,10.6-9.1,18.9-19.7,18.9L1724.4,314.8z
+                            M1838,276.6c12.3,0,21.6-11.2,19.4-23.3c-5.6-30.5-24.7-63.4-72.1-63.4c-42,0-65.6,30.1-76,60.9c-4.3,12.7,5.3,25.8,18.7,25.8
+                            H1838z"/>
+                    </g>
+                    <g id="textLogo">
+                        <path class="textLogo" d="M12.3,419.3c3.7-11.2,16.1-17,26.9-12.4c14.9,6.2,33.1,11.1,50.8,11.1c38.8,0,57-19.4,57-43.7
+                            c0-25.5-15.2-39.4-54.6-54c-52.8-18.8-77.6-47.9-77.6-83.1c0-47.3,38.2-86.1,101.3-86.1c20.5,0,39.2,4,54.3,9.7
+                            c10.3,3.9,15.6,15.2,12,25.6l0,0c-3.7,10.9-15.8,16.4-26.6,12.3c-11.1-4.2-25-7.5-40.9-7.5c-31.5,0-49.1,18.2-49.1,40
+                            c0,24.3,17.6,35.2,55.8,49.7c50.9,19.4,77,44.9,77,88.5c0,51.5-40,87.9-109.8,87.9c-23.9,0-46.4-4.4-64.9-11.6
+                            c-10.1-3.9-15.4-15-12-25.3L12.3,419.3z"/>
+                    </g>
+                </svg>
+            </div>
+            <div class="content w hr"></div>
+            <div class="content w switch-wrapper">
+                <label class="switch" id="dm_switch">
+                    <input type="checkbox" id="dm_cb">
+                    <span class="slider" id="slider">
+                        <span class="text" id="d"></span>
+                        <span class="text" id="n"></span>
+                    </span>
+                </label>
+            </div>
+                <div class="row center">
+                    <div class="content"><img src="{{ url_for('static', filename='/img/travolta.gif') }}"></div>
+                    <div class="content">
+                        <div class="super-header">Say wav again, I dare you!</div>
+                        <div class="header">{{ data.filename }} can't be swizzled</div>
+                        <div class="text">
+                            <p>We currently only support .wav files. Sorry!</p>
+                            <br>
+                            <form action="/" method="get" name="go_back">
+                                <input type="hidden" name="dm_select" id="dm_select" form="go_back">
+                                <input type="submit" class="back" value="Try again">
+                            </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <!-- <script src="../static/src/main.js"></script> -->
+    <script src="{{ url_for('static', filename='/src/main.js') }}"></script>
+    <script src="https://cdn.plot.ly/plotly-2.18.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // get and parse data
+            const dark = {{ data.dm | safe }};
+            console.log(dark)
+            if (dark == true) {
+                $("body").toggleClass("dark");
+                $("#dm_cb").prop("checked", true);
+                $("#dm_select").val(dark.toString());
+            }
+        });
+    </script>
+</html>

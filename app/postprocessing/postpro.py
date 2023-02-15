@@ -12,7 +12,6 @@
 #############################################
 import numpy as np
 import logging
-import os
 
 
 #############################################
@@ -35,7 +34,7 @@ class PostProcessor:
         verbosity = {0: logging.CRITICAL, 1: logging.ERROR, 2: logging.WARNING, 3: logging.INFO, 4: logging.DEBUG}
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(verbosity[verbose])
-
+        
     
     def postprocess_data(self, y: np.array, remove_duplicates: bool = True, test: np.array = np.zeros((0))) -> np.array:
         """Processes predictions from swizzle. Returns list with position, string, fret.
@@ -149,7 +148,9 @@ class PostProcessor:
                 else:
                     self.logger.debug("Shape: failed.")
 
+
             return np.array(r)
+
 
         else:
             self.logger.error("Data is in the wrong shape (expects (n, 6, 21).")
