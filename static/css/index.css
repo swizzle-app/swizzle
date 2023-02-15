@@ -1,8 +1,8 @@
 @charset "UTF-8";
 /* ### Colors  ### */
+/* ### accent colors ### */
 /* ### background colors ### */
 /* ### text colors ### */
-/* ### accent colors ### */
 /* ### Responsive design mixin ### */
 /* ### Container and modifier ### */
 * {
@@ -50,21 +50,19 @@ body.dark {
 body.dark .panel {
   background-color: rgb(72, 72, 74);
 }
+body.dark .header, body.dark .text {
+  color: rgb(255, 255, 255);
+}
 body.dark .nav-content {
   border-right: 5px solid rgb(28, 28, 30);
 }
-body.dark .nav-content .super-header, body.dark .nav-content .header, body.dark .nav-content .text {
-  color: #fff;
+body.dark a {
+  -webkit-text-decoration: underline dashed;
+          text-decoration: underline dashed;
+  color: rgb(255, 255, 255);
 }
-body.dark .nav-content a {
-  color: #fff;
-  border: 1px solid #fff;
-  background-color: rgb(121, 0, 255);
-}
-body.dark .nav-content a:hover {
-  color: rgb(121, 0, 255);
-  border: 1 px solid rgb(121, 0, 255);
-  background-color: #fff;
+body.dark a:hover {
+  color: rgb(255, 255, 255);
 }
 body.dark .dd_header_text {
   color: rgb(255, 255, 255);
@@ -78,16 +76,14 @@ body.dark svg .textLogo {
 
 a {
   text-decoration: none;
+  text-underline-offset: 0.2rem;
   color: rgb(121, 0, 255);
-  border: 1px solid rgb(121, 0, 255);
-  border-radius: 5px;
-  padding: 2px;
-  transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
 a:hover {
-  color: #fff;
-  background-color: rgb(121, 0, 255);
+  color: rgb(121, 0, 255);
+  -webkit-text-decoration: underline dashed;
+          text-decoration: underline dashed;
 }
 
 .flex, .row, .col {
@@ -161,29 +157,31 @@ a:hover {
 
 /* ### General text modifier ### */
 .super-header {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 400;
   line-height: 1.2;
   color: rgb(121, 0, 255);
 }
 @media (max-width: 769px) {
   .super-header {
-    font-size: 12px;
+    font-size: 1rem;
   }
 }
 
 .header {
   position: relative;
-  font-size: calc(16px + 1.1vw);
+  font-size: calc(1rem + 1.1vw);
   font-weight: 400;
   line-height: 1;
   padding: 0 0 11px 0;
+  color: rgb(28, 28, 30);
 }
 
 .text {
-  font-size: calc(16px + 0.3vw);
+  font-size: calc(1rem + 0.3vw);
   font-weight: 200;
   line-height: 1.5;
+  color: rgb(28, 28, 30);
 }
 
 /* ### Sidebar ### */
@@ -198,7 +196,6 @@ a:hover {
   left: 0;
   top: 0;
   background-color: none;
-  border-right: 0px solid #fff;
 }
 .nav .nav-burger {
   z-index: 999;
@@ -239,7 +236,6 @@ a:hover {
   margin: 0 0 0 -25vw;
   padding: 0 25px;
   height: 100%;
-  width: 15vw;
   min-width: -moz-fit-content;
   min-width: fit-content;
   color: #fff;
@@ -249,11 +245,9 @@ a:hover {
   margin: 10px 0;
 }
 .nav .nav-content .header {
-  color: black;
   font-weight: 400;
 }
 .nav .nav-content .text {
-  color: black;
   font-size: smaller;
   font-weight: 400;
 }
@@ -302,7 +296,7 @@ a:hover {
   bottom: 0;
   right: 0;
   left: 0;
-  background-color: #ccc;
+  background-color: rgb(199, 199, 204);
   margin-right: 20px;
   border-radius: 15px;
 }
@@ -315,7 +309,7 @@ a:hover {
   right: 4px;
   bottom: 4px;
   border-radius: 50%;
-  background-color: #fff;
+  background-color: rgb(255, 255, 255);
   transition: 0.25s ease-in-out;
 }
 .switch-wrapper input:checked + .slider {
@@ -325,7 +319,7 @@ a:hover {
   transform: translateX(-30px);
 }
 .switch-wrapper input:checked + #d::before {
-  color: #fff;
+  color: rgb(28, 28, 30);
 }
 .switch-wrapper #d::before {
   position: relative;
@@ -343,7 +337,7 @@ a:hover {
   right: -17px;
   font-size: 1.2rem;
   text-align: right;
-  color: #fff;
+  color: rgb(255, 255, 255);
 }
 
 /* ### User input ### */
@@ -354,7 +348,7 @@ a:hover {
   height: 12vh;
   margin: 2.5% 10%;
   border-radius: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid #777;
 }
 .dragdroparea .uploader {
   display: none;
@@ -401,8 +395,9 @@ a:hover {
 .submit {
   width: 80%;
   height: 10vh;
-  color: rgb(121, 0, 255);
-  font-size: calc(16px + 0.3vw);
+  background-color: rgb(121, 0, 255);
+  color: rgb(255, 255, 255);
+  font-size: calc(1rem + 0.3vw);
   border-radius: 5px;
   border: 1px solid rgb(121, 0, 255);
   margin-left: 10%;
@@ -411,8 +406,7 @@ a:hover {
 }
 
 .submit:hover {
-  background-color: rgb(121, 0, 255);
-  color: #fff;
+  border-color: rgb(121, 0, 255);
 }
 
 .msg {
@@ -472,32 +466,21 @@ a:hover {
   height: fit-content;
   padding: 10px;
   color: rgb(121, 0, 255);
-  font-size: calc(16px + 0.3vw);
+  font-size: calc(1rem + 0.3vw);
   border-radius: 5px;
   border: 1px solid rgb(121, 0, 255);
-  background-color: #eee;
+  background-color: rgb(255, 255, 255);
   cursor: pointer;
 }
 
 .back:hover {
   background-color: rgb(121, 0, 255);
-  color: #fff;
+  color: rgb(255, 255, 255);
 }
 
 .results {
   height: -moz-fit-content;
   height: fit-content;
-}
-
-svg .st1 {
-  stroke-dasharray: 130%;
-  stroke-dashoffset: 130%;
-  animation: dashoffset 1s ease-in-out 0s 1 forwards;
-}
-svg .st0 {
-  stroke-dasharray: 100%;
-  stroke-dashoffset: 100%;
-  animation: dashoffset 0.5s ease-in-out 0.7s 1 forwards;
 }
 
 /* ### SVG ANIMATIONS ### */

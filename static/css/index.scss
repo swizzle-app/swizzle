@@ -1,5 +1,16 @@
 /* ### Colors  ### */
 
+/* ### accent colors ### */
+//$brandColor: rgb(121, 0, 170); // old brand color
+$brandColor: rgb(121, 0, 255);
+$grayOne: #777;
+$grayTwo: #ccc;
+$grayThree: #888;
+$accentThree: #5c00e9;
+$fs-desktop: 16px;
+$fs-mobile: 12px;
+$borderradius: 5px;
+
 /* ### background colors ### */
 $lightBackgroundColor: rgb(255, 255, 255);
 $lightPanelColor: rgb(199, 199, 204);
@@ -7,20 +18,18 @@ $lightPanelColor: rgb(199, 199, 204);
 $darkBackgroundColor: rgb(28, 28, 30);
 $darkPanelColor: rgb(72,72, 74);
 
+$buttonColor: $brandColor;
+
 /* ### text colors ### */
 $lightTextColor: $darkBackgroundColor;
-$darkTextColor: $lightBackgroundColor;
+$lightLinkColor: $brandColor;
+$lightLinkColorHover: $brandColor;
 
-/* ### accent colors ### */
-//$brandColor: rgb(121, 0, 170); // old brand color
-$brandColor: rgb(121, 0, 255);
-$accentOne: 0;
-$accentTwo: #ccc;
-$accentThree: #5c00e9;
-$linkdefaultcolor: #000000;
-$fs-desktop: 16px;
-$fs-mobile: 12px;
-$borderradius: 5px;
+$darkTextColor: $lightBackgroundColor;
+$darkLinkColor: $darkTextColor;
+$darkLinkColorHover: $darkTextColor;
+
+$buttonTextColor: $darkTextColor;
 
 /* ### Responsive design mixin ### */
 @mixin breakpoint($point) {
@@ -93,24 +102,21 @@ body.dark {
         background-color: $darkPanelColor;
     }
 
+    .header, .text {
+        color: $darkTextColor;
+    }
+
     .nav-content {
         border-right: 5px solid $darkBackgroundColor;
-        .super-header, .header, .text {
-            color: #fff;
-        }
+    }
 
-        a {
-            color: #fff;
-            border: 1px solid #fff;
-            background-color: $brandColor;
-        }
+    a {
+        text-decoration: underline dashed;
+        color: $darkLinkColor;
+    }
 
-        a:hover {
-            color: $brandColor;
-            border: 1 px solid $brandColor;
-            background-color: #fff;
-        }
-
+    a:hover {
+        color: $darkLinkColorHover;
     }
 
     .dd_header_text {
@@ -131,16 +137,13 @@ body.dark {
 
 a {
     text-decoration: none;
-    color: $brandColor;
-    border: 1px solid $brandColor;
-    border-radius: $borderradius;
-    padding: 2px;
-    transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+    text-underline-offset: 0.2rem;
+    color: $lightLinkColor;
 }
 
 a:hover {
-    color: #fff;
-    background-color: $brandColor;
+    color: $lightLinkColorHover;
+    text-decoration: underline dashed;
 }
 
 .flex {
@@ -209,28 +212,30 @@ a:hover {
 
 /* ### General text modifier ### */
 .super-header {
-    font-size: calc($fs-desktop);
+    font-size: 1rem;
     font-weight: 400;
     line-height: 1.2;
     color: $brandColor;
 
     @include breakpoint(tablet) {
-        font-size: $fs-mobile;
+        font-size: 1rem;
     }
 }
 
 .header {
     position: relative;
-    font-size: calc($fs-desktop + 1.1vw);
+    font-size: calc(1rem + 1.1vw);
     font-weight: 400;
     line-height: 1;
     padding: 0 0 11px 0;
+    color: $lightTextColor;
 }
 
 .text {
-    font-size: calc($fs-desktop + 0.3vw);
+    font-size: calc(1rem + 0.3vw);
     font-weight: 200;
     line-height: 1.5;
+    color: $lightTextColor;
 }
 
 /* ### Sidebar ### */
@@ -244,7 +249,6 @@ a:hover {
     left: 0;
     top: 0;
     background-color: none;
-    border-right: 0px solid #fff;
     
     .nav-burger {
         z-index: 999;
@@ -285,7 +289,6 @@ a:hover {
         padding: 0 25px;
 
         height: 100%;
-        width: 15vw;
         min-width: fit-content;
         
         color: #fff;
@@ -300,11 +303,9 @@ a:hover {
         }
     
         .header {
-            color: black;
             font-weight: 400;
         }
         .text {
-            color: black;
             font-size: smaller;
             font-weight: 400;
         }
@@ -357,7 +358,7 @@ a:hover {
             bottom: 0;
             right: 0;
             left: 0;
-            background-color: #ccc;
+            background-color: $lightPanelColor;
             margin-right: 20px;
             border-radius: 15px;
             // transition is added via js
@@ -373,7 +374,7 @@ a:hover {
             right: 4px;
             bottom: 4px;
             border-radius: 50%;
-            background-color: #fff;
+            background-color: $darkTextColor;
             transition: 0.25s ease-in-out;
         }
     }
@@ -387,7 +388,7 @@ a:hover {
     }
     
     input:checked + #d::before {
-        color: #fff;
+        color: $lightTextColor;
     }
     
     #d::before {
@@ -407,7 +408,7 @@ a:hover {
         right: -17px;
         font-size: 1.2rem;
         text-align: right;
-        color: #fff;
+        color: $darkTextColor;
     }
 }
 
@@ -419,7 +420,7 @@ a:hover {
     height: 12vh;
     margin: 2.5% 10%;
     border-radius: $borderradius;
-    border: 1px solid $accentTwo;
+    border: 1px solid $grayOne;
 
     .uploader {
         display: none;
@@ -441,7 +442,7 @@ a:hover {
         font-weight: 400;
         padding: 1%;
         border-radius: $borderradius;
-        border: 1px solid #777;
+        border: 1px solid $grayOne;
         // transition is added via js
         // transition: all linear 0.1s;
     }
@@ -456,7 +457,7 @@ a:hover {
         z-index: 0;
         position: absolute;
         margin-left: 1%;
-        color: #888;
+        color: $grayThree;
     }
 
     .dd_header_text {
@@ -473,8 +474,9 @@ a:hover {
 .submit {
     width: 80%;
     height: 10vh;
-    color: $brandColor;
-    font-size: calc($fs-desktop + 0.3vw);
+    background-color: $buttonColor;
+    color: $buttonTextColor;
+    font-size: calc(1rem + 0.3vw);
     border-radius: $borderradius;
     border: 1px solid $brandColor;
     margin-left: 10%;
@@ -483,8 +485,7 @@ a:hover {
 }
 
 .submit:hover {
-    background-color: $brandColor;
-    color: #fff;
+    border-color: $brandColor;
 }
 
 .msg {
@@ -545,10 +546,10 @@ a:hover {
     height: fit-content;
     padding: 10px;
     color: $brandColor;
-    font-size: calc($fs-desktop + 0.3vw);
+    font-size: calc(1rem + 0.3vw);
     border-radius: $borderradius;
     border: 1px solid $brandColor;
-    background-color: #eee;
+    background-color: $darkTextColor;
     cursor: pointer;
     // transistion is added via js
     // transition: all 0.25s ease-in-out;
@@ -556,7 +557,7 @@ a:hover {
 
 .back:hover {
     background-color: $brandColor;
-    color: #fff;
+    color: $darkTextColor;
 }
 
 .results {
@@ -564,18 +565,18 @@ a:hover {
 }
 
 
-svg {
-    .st1 {
-        stroke-dasharray: 130%;
-        stroke-dashoffset: 130%;
-        animation: dashoffset 1s ease-in-out 0s 1 forwards;
-    }
-    .st0 {
-        stroke-dasharray: 100%;
-        stroke-dashoffset: 100%;
-        animation: dashoffset 0.5s ease-in-out 0.7s 1 forwards;
-    }
-}
+// svg {
+//     .waveLogo {
+//         stroke-dasharray: 130%;
+//         stroke-dashoffset: 130%;
+//         animation: dashoffset 1s ease-in-out 0s 1 forwards;
+//     }
+//     .linesLogo {
+//         stroke-dasharray: 100%;
+//         stroke-dashoffset: 100%;
+//         animation: dashoffset 0.5s ease-in-out 0.7s 1 forwards;
+//     }
+// }
 
 /* ### SVG ANIMATIONS ### */
 @keyframes dashoffset {
