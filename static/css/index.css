@@ -483,6 +483,16 @@ a:hover {
   height: fit-content;
 }
 
+.about img {
+  border-radius: 5px;
+  width: 10vw;
+}
+@media (max-width: 769px) {
+  .about img {
+    width: 45vw;
+  }
+}
+
 /* ### SVG ANIMATIONS ### */
 @keyframes dashoffset {
   to {

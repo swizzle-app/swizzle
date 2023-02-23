@@ -37,7 +37,8 @@ def home():
 
 @app.route('/about', methods=['GET'])
 def about():
-    return "Hello World!"
+    data = {'dm': 'false'}
+    return render_template('about.html', data=data)
 
 
 @app.route('/swizzle', methods=['POST'])

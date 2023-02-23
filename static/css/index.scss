@@ -564,6 +564,17 @@ a:hover {
     height: fit-content;
 }
 
+.about {
+
+    img {
+        border-radius: $borderradius;
+        width: 10vw;
+
+        @include breakpoint('tablet') {
+            width: 45vw;
+        }
+    }
+}
 
 // svg {
 //     .waveLogo {
